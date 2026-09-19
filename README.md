@@ -123,7 +123,8 @@ Model identifiers used by the project include:
 
 - 👉 [mistralai/Mistral-7B-v0.3](https://huggingface.co/mistralai/Mistral-7B-v0.3)
 
-
+### Fine-tuned Models
+- 👉 [LLM4Models](./LLM4Models/) contains fine-tuned models to abstract UML and OCL representations from Java and Python programs.
 The full-model workflow loads the complete checkpoint directly.
 
 Please review the applicable model licenses and terms before redistributing model files or using them commercially.
