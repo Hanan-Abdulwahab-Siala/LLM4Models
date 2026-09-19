@@ -1,13 +1,13 @@
-# Code Analyzer
+# LLM4Models
 
-A GPU-powered application for analyzing Mamba/Python code using a fine-tuned Mistral LLM.
+An LLM4Models project for extracting UML class diagrams and OCL specifications from both Java and Python code using a fine-tuned Mistral LLM.
 
 The project provides:
 
-- A command-line analyzer
+- A command-line extractor
 - A Gradio web interface
 - LoRA adapter and full-model options
-- Automatic GPU/CPU hardware detection
+- Automatic GPU hardware detection
 - Optional KCL CREATE HPC scripts for the project author's GPU workflow
 
 ---
@@ -17,7 +17,7 @@ The project provides:
 A typical project structure is:
 
 ```text
-Code-Analyzer/
+LLM4Models/
 │
 ├── README.md
 ├── requirements.txt
@@ -27,7 +27,7 @@ Code-Analyzer/
 ├── model_service.py
 │
 ├── input/
-│   └── sample.txt
+│   └── sample.java
 │   └── sample.py
 │
 ├── output/
@@ -64,14 +64,14 @@ Recommended:
 Clone the repository:
 
 ```bash
-git clone https://github.com/HA-Siala/Code-Analyzer.git
-cd Code-Analyzer
+git clone https://github.com/HA-Siala/LLM4Models.git
+cd LLM4Models
 ```
 
 Create a virtual environment:
 
 ```bash
-python -m venv .venv
+python3 -m venv ~/venvs
 ```
 
 Activate the virtual environment.
@@ -79,13 +79,14 @@ Activate the virtual environment.
 **Linux / macOS**
 
 ```bash
-source .venv/bin/activate
+source ~/venvs/bin/activate
+
 ```
 
 **Windows**
 
 ```bash
-. .venv\Scripts\activate
+. ~/venvs/bin/activate
 ```
 
 Upgrade pip:
@@ -112,56 +113,6 @@ If you are not using the KCL CREATE environment, you can ignore the HPC scripts 
 
 ---
 
-## Expected Model Response
-
-The model is instructed to return a Python dictionary containing exactly two top-level keys:
-
-```python
-{
-    "Flaws": ...,
-    "Refactored Versions": ...
-}
-```
-
-For example:
-
-```python
-{
-    "Flaws": [
-        {
-            "Flaw": "Example flaw",
-            "Explanation": "Explanation of the detected problem."
-        }
-    ],
-    "Refactored Versions": [
-        "def corrected_function():\n    pass"
-    ]
-}
-```
-
-The actual response depends on the model and the submitted code. The project includes a function for extracting the dictionary from the model output:
-
-```python
-extract_clean_dict()
-```
-
-## Formatting Output
-
-We use a function that converts the parsed dictionary into readable output.
-
-Example:
-
-```text
-Flaws:
-- Example flaw: Explanation of the problem.
-
-Refactored versions code:
-def corrected_function():
-    ...
-```
-
----
-
 ## Supported Models
 
 The project uses models hosted on Hugging Face. You may need to make sure the required model repositories are accessible from your environment.
@@ -170,45 +121,36 @@ Model identifiers used by the project include:
 
 ### Base Model
 
-mistralai/Mistral-7B-v0.3
+- 👉 [mistralai/Mistral-7B-v0.3](https://huggingface.co/mistralai/Mistral-7B-v0.3)
 
 ### LoRA Adapter Models
-#### Mistral
-`Mamba`  
-- **Version 1:** 'HA-Siala/Mamba-v0.1'
-- **Version 2:** 'HA-Siala/Mamba-v0.2'
+`Java`  
+- 👉 [Version 1: HA-Siala/Mamba-v0.1](https://huggingface.co/HA-Siala/Mamba-v0.1)  
+- 👉 [Version 2: HA-Siala/Mamba-v0.2](https://huggingface.co/HA-Siala/Mamba-v0.2)  
   
 `Python`
-- **Version 1:** 'HA-Siala/Detect-Flaws-v0.1'
-- **Version 2:** 'HA-Siala/Detect-Flaws-v0.2'
-- **Version 1:** 'HA-Siala/RefactoringPy-v0.1'
-#### DeepSeek
-`Mamba`  
-- **Version 1:** 'HA-Siala/Mamba-DeepSeek-v0.1' 
-
-`Python`
-- **Version 1:** 'HA-Siala/RefactoringPy-DeepSeek-v0.1'
+- 👉 [Version 1: HA-Siala/Detect-Flaws-v0.1](https://huggingface.co/HA-Siala/Detect-Flaws-v0.1)  
+- 👉 [Version 2: HA-Siala/Detect-Flaws-v0.2](https://huggingface.co/HA-Siala/Detect-Flaws-v0.2)  
+- 👉 [Version 1: HA-Siala/RefactoringPy-v0.1](https://huggingface.co/HA-Siala/RefactoringPy-v0.1)  
 
 ### Full Models
-#### Mistral
-`Mamba`  
-- **Version 1:** 'HA-Siala/Mamba-full-v0.1'
-- **Version 2:** 'HA-Siala/Mamba-full-v0.2'
-  
+`Java`  
+- 👉 [Version 1: HA-Siala/Mamba-full-v0.1](https://huggingface.co/HA-Siala/Mamba-full-v0.1)  
+- 👉 [Version 2: HA-Siala/Mamba-full-v0.2](https://huggingface.co/HA-Siala/Mamba-full-v0.2)  
 `Python`
-- **Version 1:** 'HA-Siala/Detect-Flaws-full-v0.1'
-- **Version 2:** 'HA-Siala/Detect-Flaws-full-v0.2'
-- **Version 1:** 'HA-Siala/RefactoringPy-full-v0.1'
-#### DeepSeek
-`Mamba`
-- **Version 1:** 'HA-Siala/Mamba-DeepSeek-full-v0.1'
-  
-`Python`
-- **Version 1:** 'HA-Siala/RefactoringPy-DeepSeek-full-v0.1'
+- 👉 [Version 1: HA-Siala/Detect-Flaws-full-v0.1](https://huggingface.co/HA-Siala/Detect-Flaws-full-v0.1)
+- 👉 [Version 2: HA-Siala/Detect-Flaws-full-v0.2](https://huggingface.co/HA-Siala/Detect-Flaws-full-v0.2)
+- 👉 [Version 1: HA-Siala/RefactoringPy-full-v0.1](https://huggingface.co/HA-Siala/RefactoringPy-full-v0.1)
 
 The full-model workflow loads the complete checkpoint directly.
 
 Please review the applicable model licenses and terms before redistributing model files or using them commercially.
+
+---
+
+## Credits
+
+**Student:** Hanan Abdulwahab Siala &nbsp;&nbsp;&nbsp;&nbsp; **Supervisor:** Kevin Lano
 
 ---
 
@@ -220,7 +162,6 @@ MIT License
 
 ## Contact
 
-Student: hanan.siala@kcl.ac.uk
-Supervisor: kevin.lano@kcl.ac.uk
+hanan.siala@kcl.ac.uk &nbsp;&nbsp;&nbsp;&nbsp; kevin.lano@kcl.ac.uk
 
-Code Analyzer project.
+King's College London
