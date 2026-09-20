@@ -153,7 +153,7 @@ If you choose --uml-detail "Detailed Class Diagram" only, you can include:
 --uml-parameters "Methods with Parameter Names and Types"
 --uml-parameters "Methods with Parameter Types"
 
-And if you choose --uml-detail "Outline Class Diagram", please do not select --uml-parameters.
+If you choose --uml-detail "Outline Class Diagram", do not select --uml-parameters.
 
 You can choose the --uml-format field from "PNG", "PDF", and "SVG".
 
@@ -187,7 +187,7 @@ python analyze.py input/sample.py --language Python --task "OCL" --model-version
 ```
 Where choices are:
 
---language field includes Java or Python,
+--language field includes Java or Python.
 
 --task field "OCL".
 
@@ -205,5 +205,7 @@ output/
 ├── Test1.REL
 ├── Test1.dot
 └── Test1.png
+```
+---
 ```
 ---
