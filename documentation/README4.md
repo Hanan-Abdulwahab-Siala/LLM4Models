@@ -18,10 +18,10 @@ k12345@arc-hpc-login3:~$
 
 #### 2. Go to the Project Directory
 
-Move into the Code Analyzer project:
+Move into the LLM4Models project:
 
 ```bash
-cd ~/Code-Analyzer
+cd ~/LLM4Models
 ```
 
 Check that the project is there:
@@ -52,7 +52,7 @@ pwd
 Check the input file:
 
 ```bash
-ls -lh input/sample.txt
+ls -lh input/sample.java
 or
 ls -lh input/sample.py
 ```
@@ -60,7 +60,7 @@ ls -lh input/sample.py
 You can also test:
 
 ```bash
-cat input/sample.txt
+cat input/sample.java
 or
 cat input/sample.py
 ```
@@ -137,7 +137,7 @@ Example:
 
 ```
 JOBID      PARTITION   NAME             USER       ST   TIME   NODES   NODELIST(REASON)
-37143242   gpu         mamba-   k12345  R    00:05      1   erc-hpc-comp035
+37143242   gpu         javapy-   k12345  R    00:05      1   erc-hpc-comp035
 ```
 
 The important column is **ST**. Common states include:
@@ -180,25 +180,25 @@ again whenever you want to check the status.
 The SLURM script contains:
 
 ```bash
-#SBATCH --output=/scratch/users/%u/mambapy-%j.out
+#SBATCH --output=/scratch/users/%u/javapy-%j.out
 ```
 
 `%j` is automatically replaced with the job ID. For example, if the JOBID is `37143242`, the output file is:
 
 ```
-/scratch/users/$USER/mambapy-37143242.out
+/scratch/users/$USER/javapy-37143242.out
 ```
 
 You can view it with:
 
 ```bash
-cat /scratch/users/$USER/mambapy-37143242.out
+cat /scratch/users/$USER/javapy-37143242.out
 ```
 
 To monitor it live:
 
 ```bash
-tail -f /scratch/users/$USER/mambapy-37143242.out
+tail -f /scratch/users/$USER/javapy-37143242.out
 ```
 
 Press `Ctrl + C` to stop monitoring.
@@ -210,25 +210,25 @@ Press `Ctrl + C` to stop monitoring.
 The SLURM script contains:
 
 ```bash
-#SBATCH --error=/scratch/users/%u/mambapy-%j.err
+#SBATCH --error=/scratch/users/%u/javapy-%j.err
 ```
 
 For job `37143242`, the error file is:
 
 ```
-/scratch/users/$USER/mambapy-37143242.err
+/scratch/users/$USER/javapy-37143242.err
 ```
 
 View it:
 
 ```bash
-cat /scratch/users/$USER/mambapy-37143242.err
+cat /scratch/users/$USER/javapy-37143242.err
 ```
 
 Or monitor it live:
 
 ```bash
-tail -f /scratch/users/$USER/mambapy-37143242.err
+tail -f /scratch/users/$USER/javapy-37143242.err
 ```
 
 If the file is empty, that is usually a good sign.
@@ -248,7 +248,7 @@ Job completed
 Check the project directory:
 
 ```bash
-cd ~/Code-Analyzer
+cd ~/LLM4Models
 ```
 
 Then:
@@ -268,7 +268,7 @@ Finally:
 sacct -j 37143242
 ```
 
-This allows the Mamba/Python Code Analyzer to run as a GPU-accelerated SLURM job on KCL HPC while giving you several ways to monitor its progress.
+This allows the java/Python Code Extractor to run as a GPU-accelerated SLURM job on KCL HPC while giving you several ways to monitor its progress.
 
 ---
 
