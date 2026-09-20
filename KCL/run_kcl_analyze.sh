@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=javapy-extractor
+#SBATCH --job-name=LLM4Modles
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
