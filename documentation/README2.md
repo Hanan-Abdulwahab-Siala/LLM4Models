@@ -16,10 +16,10 @@ k12345@arc-hpc-login3:~$
 ---
 #### 2. Go to the Project Directory
 
-Move into the Code Analyzer project:
+Move into the LLM4Models project:
 
 ```bash
-cd ~/Code-Analyzer
+cd ~/LLM4Models
 ```
 
 Check that the project is there:
@@ -49,7 +49,7 @@ pwd
 Check the input file:
 
 ```bash
-ls -lh input/sample.txt
+ls -lh input/sample.java
 or
 ls -lh input/sample.py
 ```
@@ -57,7 +57,7 @@ ls -lh input/sample.py
 You can also test:
 
 ```bash
-cat input/sample.txt
+cat input/sample.java
 or
 cat input/sample.py
 ```
@@ -117,76 +117,83 @@ It should point to something similar to:
 
 Run the analyze program using one of the following:
 
-Mistral + Mamba + Version 1 + LoRA Adapter
+##### UML Extraction
+For a Java/Python file:
 ```bash
- python analyze.py input/sample.txt --language Mamba --model-family Mistral --model-version 1 --model-type "LoRA Adapter" 
+python analyze.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+
+python analyze.py input/sample.py --language Python --task "UML" --model-version 1 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
 ```
 
-Mistral + Mamba + Version 2 + LoRA Adapter
+For Directory:
 ```bash
- python analyze.py input/sample.txt --language Mamba --model-family Mistral --model-version 2 --model-type "LoRA Adapter" 
+python analyze.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 ```
 
-Mistral + Mamba + Version 1 + Full Model
-```bash
- python analyze.py input/sample.txt --language Mamba --model-family Mistral --model-version 1 --model-type "Full Model" 
-```
+Where choices are:
 
-Mistral + Mamba + Version 2 + Full Model
-```bash
- python analyze.py input/sample.txt --language Mamba --model-family Mistral --model-version 2 --model-type "Full Model" 
-```
----
-Mistral + Python + Flaw Detection + Version 1 + LoRA Adapter
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Flaw Detection" --model-version 1 --model-type "LoRA Adapter" 
-```
+--language field includes Java or Python,
 
-Mistral + Python + Flaw Detection + Version 2 + LoRA Adapter
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Flaw Detection" --model-version 2 --model-type "LoRA Adapter" 
-```
+--task field "UML".
 
-Mistral + Python + Flaw Detection + Version 1 + Full Model
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Flaw Detection" --model-version 1 --model-type "Full Model" 
-```
+--model-version field includes 1, 2, 3, or 4.
 
-Mistral + Python + Flaw Detection + Version 2 + Full Model
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Flaw Detection" --model-version 2 --model-type "Full Model" 
-```
----
-Mistral + Python + Refactoring + Version 1 + LoRA Adapter
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Refactoring" --model-version 1 --model-type "LoRA Adapter" 
-```
+--model-type field includes "LoRA Adapter" or "Full Model".
 
-Mistral + Python + Refactoring + Version 1 + Full Model
-```bash
- python analyze.py input/sample.py --language Python --model-family Mistral --task "Refactoring" --model-version 1 --model-type "Full Model" 
-```
----
-DeepSeek + Mamba + Version 1 + LoRA Adapter
-```bash
- python analyze.py input/sample.txt --language Mamba --model-family DeepSeek --model-version 1 --model-type "LoRA Adapter" 
-```
+--uml-detail field includes "Detailed Class Diagram" and "Outline Class Diagram".
 
-DeepSeek + Mamba + Version 1 + Full Model
-```bash
- python analyze.py input/sample.txt --language Mamba --model-family DeepSeek --model-version 1 --model-type "Full Model" 
-```
----
-DeepSeek + Python + Version 1 + LoRA Adapter
- ```bash
- python analyze.py input/sample.py --language Python --model-family DeepSeek --model-version 1 --model-type "LoRA Adapter" 
-```
+If you choose --uml-detail "Detailed Class Diagram" only, you can include: 
+--uml-parameters "Methods Only"
+--uml-parameters "Methods with Parameter Names and Types"
+--uml-parameters "Methods with Parameter Types"
 
-DeepSeek + Python + Version 1 + Full Model
-```bash
- python analyze.py input/sample.py --language Python --model-family DeepSeek --model-version 1 --model-type "Full Model" 
-```
+And if you choose --uml-detail "Outline Class Diagram", please do not select --uml-parameters.
 
-The output will be saved to: output/output.txt
+You can choose the --uml-format field from "PNG", "PDF", and "SVG".
+
+Default values are:
+
+Diagram type: Detailed Class Diagram
+Parameters: Methods Only
+Format: PNG
+
+Generated files are:
+output/output.txt
+output/inference_metrics.txt
+output/Test1.UML
+output/Test1.REL
+output/Test1.dot
+output/Test1.png
+
+##### OCL Extraction
+```bash
+python analyze.py input/sample.java --language Java --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.java --language Java --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.py --language Python --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+
+python analyze.py input/sample.py --language Python --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+```
+Where choices are:
+
+--language field includes Java or Python,
+
+--task field "OCL".
+
+--model-version field includes 1 or 2.
+
+--model-type field includes "LoRA Adapter" or "Full Model".
+
+Generated files are:
+output/output.txt
+output/inference_metrics.txt
+output/Test1.OCL
 
 ---
