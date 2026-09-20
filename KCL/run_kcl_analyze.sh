@@ -103,8 +103,68 @@ echo "Running inference..."
 # --------------------------------------------------
 # Choose ONE command below starting with python and uncomment it.
 # --------------------------------------------------
-
-
+##### UML Extraction
+# For a Java/Python file:
+python analyze.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
+#
+# python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter"
+# 
+# python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+#
+# python analyze.py input/sample.py --language Python --task "UML" --model-version 1 --model-type "LoRA Adapter"
+#
+# python analyze.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
+# --------------------------------------------------
+# For Directory:
+#
+# python analyze.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+#
+# Where choices are:
+#
+# --language field includes Java or Python,
+# --task field "UML".
+# --model-version field includes 1, 2, 3, or 4.
+# --model-type field includes "LoRA Adapter" or "Full Model".
+# --uml-detail field includes "Detailed Class Diagram" and "Outline Class Diagram".
+#
+# If you choose --uml-detail "Detailed Class Diagram" only, you can include: 
+# --uml-parameters "Methods Only"
+# --uml-parameters "Methods with Parameter Names and Types"
+# --uml-parameters "Methods with Parameter Types"
+#
+# And if you choose --uml-detail "Outline Class Diagram", please do not select --uml-parameters.
+#
+# You can choose the --uml-format field from "PNG", "PDF", and "SVG".
+# --------------------------------------------------
+# Default values are:
+#
+# Diagram type: Detailed Class Diagram
+# Parameters: Methods Only
+# Format: PNG
+#
+# --------------------------------------------------
+# --------------------------------------------------
+##### OCL Extraction
+#
+# python analyze.py input/sample.java --language Java --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+#
+# python analyze.py input/sample.java --language Java --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+#
+# python analyze.py input/sample.py --language Python --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+#
+# python analyze.py input/sample.py --language Python --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+#
+# Where choices are:
+#
+# --language field includes Java or Python,
+#
+# --task field "OCL".
+#
+# --model-version field includes 1 or 2.
+#
+# --model-type field includes "LoRA Adapter" or "Full Model".
+# --------------------------------------------------
+# --------------------------------------------------
 echo
 echo "========================================"
 echo "Job completed successfully"
