@@ -16,7 +16,7 @@ k12345@arc-hpc-login3:~$
 ---
 #### 2. Go to the Project Directory
 
-Move into the Code Analyzer project:
+Move into the LLM4Models project:
 
 ```bash
 cd ~/LLM4Models
