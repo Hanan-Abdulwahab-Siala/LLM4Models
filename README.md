@@ -106,7 +106,7 @@ Then, we need to create a Conda environment for Graphviz
 cd ~
 conda create -n graphviz-env -c conda-forge graphviz
 ```
-Then y and then activate the Graphviz environment:
+Then type y, and then activate the Graphviz environment:
 ```bash
 conda activate graphviz-env
 ```
@@ -144,7 +144,7 @@ Model identifiers used by the project include:
 - 👉 [mistralai/Mistral-7B-v0.3](https://huggingface.co/mistralai/Mistral-7B-v0.3)
 
 ### Fine-tuned Models
-- 👉 [models](./models/) contains fine-tuned models to abstract UML and OCL representations from Java and Python programs.
+- 👉 [models](./models/) contains fine-tuned models to extract UML and OCL representations from Java and Python programs.
 The full-model workflow loads the complete checkpoint directly.
 
 Please review the applicable model licenses and terms before redistributing model files or using them commercially.
