@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=code-analyzer-gradio
+#SBATCH --job-name=LLM4Modles
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
@@ -8,15 +8,15 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
-#SBATCH --output=/scratch/users/%u/mambapy-gradio-%j.out
-#SBATCH --error=/scratch/users/%u/mambapy-gradio-%j.err
+#SBATCH --output=/scratch/users/%u/javapy-gradio-%j.out
+#SBATCH --error=/scratch/users/%u/javapy-gradio-%j.err
 
 export PYTHONNOUSERSITE=1
 
 set -e
 
 echo "========================================"
-echo "Unified Code Analyzer - Gradio"
+echo "LLM4Modles - Gradio"
 echo "========================================"
 
 # --------------------------------------------------
@@ -55,7 +55,7 @@ module load cuda
 
 # --------------------------------------------------
 
-cd "$HOME/Code-Analyzer"
+cd "$HOME/LLM4Modles"
 
 source ~/venvs/bin/activate
 # --------------------------------------------------
