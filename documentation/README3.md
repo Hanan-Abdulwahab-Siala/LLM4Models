@@ -19,7 +19,7 @@ k12345@arc-hpc-login3:~$
 Move into the Code Analyzer project:
 
 ```bash
-cd ~/Code-Analyzer
+cd ~/LLM4Models
 ```
 
 Check that the project is there:
@@ -48,7 +48,7 @@ pwd
 Check the input file:
 
 ```bash
-ls -lh input/sample.txt
+ls -lh input/sample.java
 or
 ls -lh input/sample.py
 ```
@@ -56,7 +56,7 @@ ls -lh input/sample.py
 You can also test:
 
 ```bash
-cat input/sample.txt
+cat input/sample.java
 or
 cat input/sample.py
 ```
