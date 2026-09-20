@@ -5,26 +5,30 @@ import gradio as gr
 from model_service import (
     load_model,
     unload_model,
-    generate_prompt,
     generate_inference_output,
-    format_output,
+    post_process_uml,
+    post_process_ocl,
+    create_metrics_text,
     is_model_loaded,
     get_loaded_model_info,
 )
 
+from graphviz_service import generate_graphviz_diagram
 
-# ============================================================
-# Constants
-# ============================================================
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
 
-MODEL_FAMILIES = [
-    "Mistral",
-    "DeepSeek",
-]
+MODEL_FAMILY = "Mistral"
 
 LANGUAGES = [
-    "Mamba",
+    "Java",
     "Python",
+]
+
+TASKS = [
+    "UML",
+    "OCL",
 ]
 
 MODEL_TYPES = [
@@ -32,10 +36,324 @@ MODEL_TYPES = [
     "Full Model",
 ]
 
+OUTPUT_DIRECTORY = "output"
+OUTPUT_FILE = os.path.join(
+    OUTPUT_DIRECTORY,
+    "output.txt",
+)
 
-# ============================================================
-# UI helpers
-# ============================================================
+def load_program_directory(
+    input_directory,
+    language,
+):
+
+    if not input_directory:
+        return ""
+
+    if not os.path.isdir(input_directory):
+        return ""
+
+    try:
+
+        code_list = []
+
+        extension = (
+            ".java"
+            if language == "Java"
+            else ".py"
+        )
+
+        for root, dirs, files in os.walk(
+            input_directory
+        ):
+
+            for file in files:
+
+                if not file.endswith(extension):
+                    continue
+
+                file_path = os.path.join(
+                    root,
+                    file,
+                )
+
+                with open(
+                    file_path,
+                    "r",
+                    encoding="utf-8",
+                ) as f:
+
+                    code_list.append(
+                        f.read()
+                    )
+
+        if not code_list:
+            return ""
+
+        combined_code = "\n".join(
+            code_list
+        )
+
+        return combined_code
+
+    except Exception:
+        return ""
+
+def set_uml_postprocessed_state():
+    return (
+        gr.update(interactive=False),  # Pre-process
+        gr.update(interactive=False),  # Analyze
+        gr.update(interactive=True),   # Post-process UML
+        gr.update(interactive=False),  # Post-process OCL
+    )
+
+def clear_generated_results():
+
+    return (
+        "",
+        "",
+        None,
+        None,
+        "",
+        None,
+    )
+
+def update_task_outputs(task_value):
+
+    if task_value == "UML":
+
+        return (
+            gr.update(visible=True),
+            gr.update(visible=True),
+            gr.update(visible=False),
+            gr.update(visible=False),
+        )
+
+    if task_value == "OCL":
+
+        return (
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(visible=True),
+            gr.update(visible=True),
+        )
+
+    return (
+        gr.update(visible=False),
+        gr.update(visible=False),
+        gr.update(visible=False),
+        gr.update(visible=False),
+    )
+
+def update_uml_postprocess_button(
+    task_value,
+    detail_value,
+    parameters_value,
+    format_value,
+):
+
+    if task_value != "UML":
+        return gr.update(
+            interactive=False,
+        )
+
+    if not detail_value:
+        return gr.update(
+            interactive=False,
+        )
+
+    if not format_value:
+        return gr.update(
+            interactive=False,
+        )
+
+    # Detailed diagrams require a parameter selection.
+    if (
+        detail_value == "Detailed Class Diagram"
+        and not parameters_value
+    ):
+        return gr.update(
+            interactive=False,
+        )
+
+    return gr.update(
+        interactive=True,
+    )
+
+def update_uml_controls(task_value):
+    if task_value == "UML":
+        return (
+            gr.update(
+                visible=True,
+                interactive=True,
+                value=None,
+            ),
+            gr.update(
+                visible=False,
+                interactive=False,
+                value=None,
+            ),
+            gr.update(
+                visible=True,
+                interactive=True,
+                value=None,
+            ),
+        )
+
+    return (
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+    )
+
+def update_uml_parameters(detail_value):
+    if detail_value == "Detailed Class Diagram":
+        return gr.update(
+            visible=True,
+            interactive=True,
+        )
+    return gr.update(
+        visible=False,
+        interactive=False,
+        value=None,
+    )
+
+def hide_uml_controls():
+    return (
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+        gr.update(
+            visible=False,
+            interactive=False,
+            value=None,
+        ),
+    )
+
+def uml_selection_changed(
+    task_value,
+    detail_value,
+    parameters_value,
+    format_value,
+):
+    if task_value != "UML":
+        return gr.update(interactive=False)
+
+    if not detail_value:
+        return gr.update(interactive=False)
+
+    if detail_value == "Detailed Class Diagram":
+        if not parameters_value:
+            return gr.update(interactive=False)
+
+    if not format_value:
+        return gr.update(interactive=False)
+
+    return gr.update(interactive=True)
+
+
+def update_postprocess_buttons(task_value):
+    if task_value == "UML":
+        return (
+            gr.update(interactive=True),
+            gr.update(interactive=False),
+        )
+
+    if task_value == "OCL":
+        return (
+            gr.update(interactive=False),
+            gr.update(interactive=True),
+        )
+
+    return (
+        gr.update(interactive=False),
+        gr.update(interactive=False),
+    )
+
+def set_pipeline_state(state, task_value):
+    if state == "clear":
+        return (
+            gr.update(interactive=False),  # preprocess
+            gr.update(interactive=False),  # analyze
+            gr.update(interactive=False),  # UML
+            gr.update(interactive=False),  # OCL
+        )
+
+    if state == "program":
+        return (
+            gr.update(interactive=True),
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+        )
+
+    if state == "preprocessed":
+        return (
+            gr.update(interactive=False),
+            gr.update(interactive=True),
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+        )
+
+    if state == "analyzed":
+        if task_value == "UML":
+            return (
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=True),
+                gr.update(interactive=False),
+            )
+
+        if task_value == "OCL":
+            return (
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=True),
+            )
+
+    if state == "postprocessed":
+        return (
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+            gr.update(interactive=False),
+        )
+
+    return (
+        gr.update(interactive=False),
+        gr.update(interactive=False),
+        gr.update(interactive=False),
+        gr.update(interactive=False),
+    )
+
+def program_input_changed(program_text):
+    if program_text and program_text.strip():
+        return set_pipeline_state("program", None)
+    else:
+        return set_pipeline_state("clear", None)
+# =============================================================================
+# DISPLAY HELPERS
+# =============================================================================
 
 def _loaded_model_text(info):
 
@@ -52,116 +370,39 @@ def _loaded_model_text(info):
     )
 
 
-# ============================================================
-# Configuration helpers
-# ============================================================
-
-def _configuration_values(
-    model_family,
+def _version_choices(
     language,
     task,
-    model_version,
 ):
 
-    if model_family == "DeepSeek":
+    if task == "UML":
 
-        task_update = gr.update(
-            choices=["Flaws + Refactoring"],
-            value="Flaws + Refactoring",
-            interactive=False,
-        )
-
-        version_update = gr.update(
-            choices=["1"],
-            value="1",
-            interactive=False,
-        )
-
-        return (
-            task_update,
-            version_update,
-        )
-
-    # --------------------------------------------------------
-    # Mistral / Mamba
-    # --------------------------------------------------------
-
-    if language == "Mamba":
-
-        task_update = gr.update(
-            choices=["Flaws + Refactoring"],
-            value="Flaws + Refactoring",
-            interactive=False,
-        )
-
-        version_update = gr.update(
-            choices=["1", "2"],
-            value=(
-                str(model_version)
-                if str(model_version) in {"1", "2"}
-                else "2"
-            ),
+        return gr.update(
+            choices=[
+                "1",
+                "2",
+                "3",
+                "4",
+            ],
+            value="2",
             interactive=True,
         )
 
-        return (
-            task_update,
-            version_update,
-        )
-
-    # --------------------------------------------------------
-    # Mistral / Python
-    # --------------------------------------------------------
-
-    task_choices = [
-        "Flaw Detection",
-        "Refactoring",
-    ]
-
-    selected_task = (
-        task
-        if task in task_choices
-        else "Flaw Detection"
-    )
-
-    if selected_task == "Refactoring":
-
-        version_update = gr.update(
-            choices=["1"],
-            value="1",
-            interactive=False,
-        )
-
-    else:
-
-        version_update = gr.update(
-            choices=["1", "2"],
-            value=(
-                str(model_version)
-                if str(model_version) in {"1", "2"}
-                else "2"
-            ),
-            interactive=True,
-        )
-
-    task_update = gr.update(
-        choices=task_choices,
-        value=selected_task,
+    return gr.update(
+        choices=[
+            "1",
+            "2",
+        ],
+        value="2",
         interactive=True,
     )
 
-    return (
-        task_update,
-        version_update,
-    )
 
-
-# ============================================================
-# Configuration changed
-# ============================================================
+# =============================================================================
+# CONFIGURATION EVENTS
+# =============================================================================
 
 def configuration_changed(
-    model_family,
     language,
     task,
     model_version,
@@ -170,15 +411,12 @@ def configuration_changed(
 
     unload_model()
 
-    task_update, version_update = _configuration_values(
-        model_family=model_family,
-        language=language,
-        task=task,
-        model_version=model_version,
+    version_update = _version_choices(
+        language,
+        task,
     )
 
     return (
-        task_update,
         version_update,
         "",
         None,
@@ -186,34 +424,8 @@ def configuration_changed(
         "No model loaded.",
     )
 
-
-# ============================================================
-# Model family changed
-# ============================================================
-
-def model_family_changed(
-    model_family,
-    language,
-    task,
-    model_version,
-    model_type,
-):
-
-    return configuration_changed(
-        model_family=model_family,
-        language=language,
-        task=task,
-        model_version=model_version,
-        model_type=model_type,
-    )
-
-
-# ============================================================
-# Language changed
-# ============================================================
 
 def language_changed(
-    model_family,
     language,
     task,
     model_version,
@@ -221,20 +433,14 @@ def language_changed(
 ):
 
     return configuration_changed(
-        model_family=model_family,
-        language=language,
-        task=task,
-        model_version=model_version,
-        model_type=model_type,
+        language,
+        task,
+        model_version,
+        model_type,
     )
 
 
-# ============================================================
-# Task changed
-# ============================================================
-
 def task_changed(
-    model_family,
     language,
     task,
     model_version,
@@ -243,37 +449,10 @@ def task_changed(
 
     unload_model()
 
-    if model_family == "DeepSeek":
-
-        version_update = gr.update(
-            choices=["1"],
-            value="1",
-            interactive=False,
-        )
-
-    elif (
-        model_family == "Mistral"
-        and language == "Python"
-        and task == "Refactoring"
-    ):
-
-        version_update = gr.update(
-            choices=["1"],
-            value="1",
-            interactive=False,
-        )
-
-    else:
-
-        version_update = gr.update(
-            choices=["1", "2"],
-            value=(
-                str(model_version)
-                if str(model_version) in {"1", "2"}
-                else "2"
-            ),
-            interactive=True,
-        )
+    version_update = _version_choices(
+        language,
+        task,
+    )
 
     return (
         version_update,
@@ -284,12 +463,7 @@ def task_changed(
     )
 
 
-# ============================================================
-# Version changed
-# ============================================================
-
 def version_changed(
-    model_family,
     language,
     task,
     model_version,
@@ -305,13 +479,8 @@ def version_changed(
         "No model loaded.",
     )
 
-
-# ============================================================
-# Model type changed
-# ============================================================
 
 def model_type_changed(
-    model_family,
     language,
     task,
     model_version,
@@ -328,12 +497,11 @@ def model_type_changed(
     )
 
 
-# ============================================================
-# Load selected model
-# ============================================================
+# =============================================================================
+# LOAD MODEL
+# =============================================================================
 
 def load_selected_model(
-    model_family,
     language,
     task,
     model_version,
@@ -342,33 +510,13 @@ def load_selected_model(
 
     try:
 
-        # ----------------------------------------------------
-        # Normalize configuration exactly according to the UI
-        # rules.
-        # ----------------------------------------------------
-
-        if model_family == "DeepSeek":
-
-            task = "Flaws + Refactoring"
-            model_version = 1
-
-        elif language == "Mamba":
-
-            task = "Flaws + Refactoring"
-
-        elif (
-            language == "Python"
-            and task == "Refactoring"
-        ):
-
-            model_version = 1
+        version = int(model_version)
 
         info = load_model(
             language=language,
             task=task,
-            version=int(model_version),
+            version=version,
             model_type=model_type,
-            model_family=model_family,
         )
 
         status = (
@@ -376,14 +524,17 @@ def load_selected_model(
             + _loaded_model_text(info)
         )
 
-        # Loading a model clears the old program/file/output,
-        # but the newly loaded model remains loaded.
-
         return (
             status,
             "",
             None,
             "",
+            "",
+            "",
+            None,
+            None,
+            "",
+            None,
         )
 
     except Exception as exc:
@@ -394,14 +545,244 @@ def load_selected_model(
             "",
             None,
             "",
+            "",
+            "",
+            None,
+            None,
+            "",
+            None,
+        )
+
+# =============================================================================
+# ORIGINAL PREPROCESSING
+# =============================================================================
+
+def CleanJavaCode(JavaCode):
+
+    JavaCode = __import__("re").sub(
+        r'//.*',
+        '',
+        JavaCode,
+    )
+
+    JavaCode = __import__("re").sub(
+        r'/\*[\s\S]*?\*/',
+        '',
+        JavaCode,
+    )
+
+    JavaCode = __import__("re").sub(
+        r'^\s*package\s+[^\s;]+;\s*',
+        '',
+        JavaCode,
+        flags=__import__("re").MULTILINE,
+    )
+
+    JavaCode = __import__("re").sub(
+        r'^\s*import\s+[^\s;]+;\s*',
+        '',
+        JavaCode,
+        flags=__import__("re").MULTILINE,
+    )
+
+    JavaCode = __import__("re").sub(
+        r'""".*?"""',
+        '""',
+        JavaCode,
+        flags=__import__("re").DOTALL,
+    )
+
+    JavaCode = '\n'.join(
+        line
+        for line in JavaCode.splitlines()
+        if line.strip()
+    )
+
+    return JavaCode
+
+
+def CleanPythonCode(PythonCode):
+
+    import re
+
+    PythonCode = re.sub(
+        r'#.*',
+        '',
+        PythonCode,
+    )
+
+    PythonCode = re.sub(
+        r'(\'\'\'[\s\S]*?\'\'\'|\"\"\"[\s\S]*?\"\"\")',
+        '',
+        PythonCode,
+    )
+
+    PythonCode = re.sub(
+        r'^\s*from\s+[^\s;]+;\s*',
+        '',
+        PythonCode,
+        flags=re.MULTILINE,
+    )
+
+    PythonCode = re.sub(
+        r'^\s*import\s+[^\s;]+;\s*',
+        '',
+        PythonCode,
+        flags=re.MULTILINE,
+    )
+
+    CleanedLines = []
+
+    Lines = PythonCode.split('\n')
+
+    for line in Lines:
+
+        if line.endswith('='):
+
+            line += '"String"'
+
+            CleanedLines.append(
+                line
+            )
+
+        if not line.strip():
+            continue
+
+        LeadingSpaces = (
+            len(line)
+            - len(line.lstrip())
+        )
+
+        CleanedLines.append(
+            ' ' * LeadingSpaces
+            + line.strip()
+        )
+
+    CleanedFile = '\n'.join(
+        CleanedLines
+    )
+
+    return CleanedFile
+
+
+def CleaningFile(
+    SourceFile,
+    DestinationFile,
+    Language,
+):
+
+    try:
+
+        with open(
+            SourceFile,
+            "r",
+            encoding="utf-8",
+        ) as file:
+
+            Program = file.read()
+
+        if Language == "Java":
+
+            InputFile = CleanJavaCode(
+                Program
+            )
+
+        else:
+
+            InputFile = CleanPythonCode(
+                Program
+            )
+
+        if os.path.exists(
+            DestinationFile
+        ):
+
+            os.remove(
+                DestinationFile
+            )
+
+        with open(
+            DestinationFile,
+            "w",
+            encoding="utf-8",
+        ) as file:
+
+            file.write(
+                InputFile
+            )
+
+        return True
+
+    except FileNotFoundError:
+
+        return False
+
+
+def PutTogether(
+    InputDirectoryProgram,
+    SourceFile,
+    Language,
+):
+
+    JavaCodeList = []
+
+    for root, dirs, files in os.walk(
+        InputDirectoryProgram
+    ):
+
+        for file in files:
+
+            if (
+                Language == "Java"
+                and file.endswith(".java")
+            ) or (
+                Language == "Python"
+                and file.endswith(".py")
+            ):
+
+                FilePath = os.path.join(
+                    root,
+                    file,
+                )
+
+                with open(
+                    FilePath,
+                    "r",
+                    encoding="utf-8",
+                ) as f:
+
+                    JavaCode = f.read()
+
+                    JavaCodeList.append(
+                        JavaCode
+                    )
+
+    CombinedCode = "\n".join(
+        JavaCodeList
+    )
+
+    if os.path.exists(SourceFile):
+
+        os.remove(SourceFile)
+
+    with open(
+        SourceFile,
+        "w",
+        encoding="utf-8",
+    ) as file:
+
+        file.write(
+            CombinedCode
         )
 
 
-# ============================================================
-# Program file loading
-# ============================================================
+# =============================================================================
+# LOAD PROGRAM
+# =============================================================================
 
-def load_program_file(file_path):
+def load_program_file(
+    file_path,
+):
 
     if not file_path:
         return ""
@@ -421,9 +802,54 @@ def load_program_file(file_path):
         return ""
 
 
-# ============================================================
-# Analyze code
-# ============================================================
+# =============================================================================
+# PREPROCESS BUTTON
+# =============================================================================
+
+def preprocess_program(
+    code,
+    language,
+):
+
+    if not code or not code.strip():
+
+        return (
+            "ERROR: Please load or enter "
+            "a program first.",
+            code,
+        )
+
+    try:
+
+        if language == "Java":
+
+            cleaned = CleanJavaCode(
+                code
+            )
+
+        else:
+
+            cleaned = CleanPythonCode(
+                code
+            )
+
+        return (
+            "Pre-processing completed successfully.",
+            cleaned,
+        )
+
+    except Exception as exc:
+
+        return (
+            "ERROR during preprocessing.\n\n"
+            f"{type(exc).__name__}: {exc}",
+            code,
+        )
+
+
+# =============================================================================
+# ANALYZE
+# =============================================================================
 
 def analyze_code(
     code,
@@ -436,319 +862,727 @@ def analyze_code(
         return (
             "ERROR: No model is loaded.\n"
             "Please select the model configuration "
-            "and press Load Model first."
+            "and press Load Model first.",
+            "",
         )
 
     if not code or not code.strip():
 
-        return "Please enter or load code first."
+        return (
+            "Please enter or load code first.",
+            "",
+        )
 
     try:
 
         info = get_loaded_model_info()
 
-        # ----------------------------------------------------
-        # Language must match loaded model.
-        # ----------------------------------------------------
-
         if info["language"] != language:
 
             return (
-                "ERROR: The selected language does not "
-                "match the loaded model.\n\n"
-                f"Loaded language: {info['language']}\n"
-                f"Selected language: {language}\n\n"
-                "Please press Load Model."
+                "ERROR: The selected language does "
+                "not match the loaded model.\n\n"
+                f"Loaded language: "
+                f"{info['language']}\n"
+                f"Selected language: "
+                f"{language}\n\n"
+                "Please press Load Model.",
+                "",
             )
 
-        # ----------------------------------------------------
-        # Mistral Python task must match.
-        #
-        # Mamba and DeepSeek use fixed task:
-        # Flaws + Refactoring.
-        # ----------------------------------------------------
+        if info["task"] != task:
 
-        if info["model_family"] == "Mistral":
+            return (
+                "ERROR: The selected task does "
+                "not match the loaded model.\n\n"
+                f"Loaded task: "
+                f"{info['task']}\n"
+                f"Selected task: "
+                f"{task}\n\n"
+                "Please press Load Model.",
+                "",
+            )
 
-            if (
-                language == "Python"
-                and info["task"] != task
-            ):
-
-                return (
-                    "ERROR: The selected task does not "
-                    "match the loaded model.\n\n"
-                    f"Loaded task: {info['task']}\n"
-                    f"Selected task: {task}\n\n"
-                    "Please press Load Model."
-                )
-
-        # ----------------------------------------------------
-        # Generate exact prompt for the selected model.
-        # ----------------------------------------------------
-
-        prompt = generate_prompt(
-            language=language,
-            task=task,
-            content=code,
-            model_family=info["model_family"],
+        (
+            raw_output,
+            input_tokens,
+            generated_tokens,
+            inference_time,
+        ) = generate_inference_output(
+            code,
+            return_metrics=True,
         )
 
-        # ----------------------------------------------------
-        # Generate raw model response.
-        # ----------------------------------------------------
+        if (
+            raw_output is None
+            or not str(raw_output).strip()
+        ):
 
-        raw_output = generate_inference_output(
-            prompt
-        )
+            return (
+                "ERROR: Model returned empty output.",
+                "",
+            )
 
-        # ----------------------------------------------------
-        # Format response.
-        # ----------------------------------------------------
-
-        final_output = format_output(
-            raw_output
-        )
-
-        # ----------------------------------------------------
-        # Save output.
-        # ----------------------------------------------------
+        # ---------------------------------------------------------------------
+        # Save PURE JSON/TEXT response.
+        # ---------------------------------------------------------------------
 
         os.makedirs(
-            "output",
+            OUTPUT_DIRECTORY,
             exist_ok=True,
         )
 
         with open(
-            "output/output.txt",
+            OUTPUT_FILE,
             "w",
             encoding="utf-8",
         ) as file:
 
-            file.write(final_output)
+            file.write(
+                str(raw_output)
+            )
 
-        return final_output
+        # ---------------------------------------------------------------------
+        # Metrics are kept OUTSIDE output.txt.
+        # ---------------------------------------------------------------------
+
+        metrics = create_metrics_text(
+            language=language,
+            task=task,
+            model_type=info["model_type"],
+            model_version=info["version"],
+            input_tokens=input_tokens,
+            generated_tokens=generated_tokens,
+            inference_time=inference_time,
+        )
+
+        metrics_file = os.path.join(
+            OUTPUT_DIRECTORY,
+            "inference_metrics.txt",
+        )
+
+        with open(
+            metrics_file,
+            "w",
+            encoding="utf-8",
+        ) as file:
+
+            file.write(metrics)
+
+        # ---------------------------------------------------------------------
+        # Return JSON and metrics separately.
+        # ---------------------------------------------------------------------
+
+        return (
+            str(raw_output),
+            metrics,
+        )
 
     except Exception as exc:
 
         return (
             "ERROR during analysis.\n\n"
-            f"{type(exc).__name__}: {exc}"
+            f"{type(exc).__name__}: {exc}",
+            "",
         )
 
+# =============================================================================
+# UML POST-PROCESS
+# =============================================================================
 
-# ============================================================
-# Clear program/output
-# ============================================================
+def postprocess_uml(
+    language,
+    uml_detail,
+    uml_parameters,
+    uml_format,
+):
+
+    if not uml_detail:
+        uml_detail = "Detailed Class Diagram"
+
+    if not uml_parameters:
+        uml_parameters = "Methods Only"
+
+    if not uml_format:
+        uml_format = "PNG"
+
+
+    if not os.path.isfile(OUTPUT_FILE):
+        return (
+            "ERROR: output/output.txt does not exist.",
+            None,
+            None,
+        )
+
+    try:
+
+        # ----------------------------------------------------
+        # Step 1: UML extraction
+        # ----------------------------------------------------
+
+        result = post_process_uml(
+            input_file=OUTPUT_FILE,
+            output_directory=OUTPUT_DIRECTORY,
+            language=language,
+        )
+
+        if not result["success"]:
+
+            return (
+                "ERROR during UML post-processing.\n\n"
+                f"{result['error']}",
+                None,
+                None,
+            )
+
+        # ----------------------------------------------------
+        # Step 2: Graphviz
+        # ----------------------------------------------------
+
+        graphviz_result = generate_graphviz_diagram(
+            OUTPUT_DIRECTORY,
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        )
+
+        if not graphviz_result["success"]:
+
+            return (
+                "UML extraction completed, "
+                "but Graphviz failed.\n\n"
+                f"{graphviz_result['error']}",
+                None,
+                None,
+            )
+
+        output_file = graphviz_result["output_file"]
+
+        # ----------------------------------------------------
+        # Step 3: Check generated file
+        # ----------------------------------------------------
+
+        if not output_file or not os.path.isfile(output_file):
+
+            return (
+                "UML post-processing completed, "
+                "but the generated diagram file "
+                "was not found.\n\n"
+                f"Expected file:\n{output_file}",
+                None,
+                None,
+            )
+
+        # ----------------------------------------------------
+        # Step 4: Image only for PNG
+        # ----------------------------------------------------
+
+        if uml_format == "PNG":
+            image_file = output_file
+        else:
+            image_file = None
+
+        status = (
+            "UML post-processing completed successfully.\n\n"
+            f"Classes: {result['uml_file']}\n"
+            f"Relationships: {result['rel_file']}\n\n"
+            f"Graphviz DOT: {graphviz_result['dot_file']}\n"
+            f"Diagram: {output_file}\n"
+            f"Format: {uml_format}"
+        )
+
+        return (
+            status,
+            image_file,
+            output_file,
+        )
+
+    except Exception as exc:
+
+        return (
+            "ERROR during UML post-processing.\n\n"
+            f"{type(exc).__name__}: {exc}",
+            None,
+            None,
+        )
+# =============================================================================
+# OCL POST-PROCESS
+# =============================================================================
+
+def postprocess_ocl():
+
+    if not os.path.isfile(OUTPUT_FILE):
+
+        return (
+            "ERROR: output/output.txt does not exist.",
+            "",
+            None,
+        )
+
+    try:
+
+        result = post_process_ocl(
+            input_file=OUTPUT_FILE,
+            output_directory=OUTPUT_DIRECTORY,
+        )
+
+        if not result["success"]:
+
+            return (
+                "ERROR during OCL post-processing.\n\n"
+                f"{result['error']}",
+                "",
+                None,
+            )
+
+        ocl_file = result["ocl_file"]
+
+        # ----------------------------------------------------
+        # Read generated OCL file
+        # ----------------------------------------------------
+
+        ocl_text = ""
+
+        if ocl_file and os.path.isfile(ocl_file):
+
+            with open(
+                ocl_file,
+                "r",
+                encoding="utf-8",
+            ) as file:
+
+                ocl_text = file.read()
+
+        status = (
+            "OCL post-processing completed successfully.\n\n"
+            f"OCL file: {ocl_file}"
+        )
+
+        return (
+            status,
+            ocl_text,
+            ocl_file,
+        )
+
+    except Exception as exc:
+
+        return (
+            "ERROR during OCL post-processing.\n\n"
+            f"{type(exc).__name__}: {exc}",
+            "",
+            None,
+        )
+# =============================================================================
+# CLEAR
+# =============================================================================
 
 def clear_program():
 
-    # IMPORTANT:
-    # The loaded model is NOT unloaded.
-
     return (
-        "",
-        None,
-        "",
+        "",       # program
+        None,     # program_file
+        "",       # result
+        "",       # inference_metrics
+        "",       # preprocess_status
+        "",       # postprocess_status
+        None,     # uml_image
+        None,     # uml_output_file
+        "",       # ocl_result
+        None,     # ocl_output_file
     )
-
-
-# ============================================================
-# Gradio UI
-# ============================================================
+# =============================================================================
+# GRADIO UI
+# =============================================================================
 
 with gr.Blocks(
-    title="Unified Code Analyzer"
+    title="LLM4Models UML/OCL Extractor"
 ) as app:
 
     gr.Markdown(
-        "# Unified Code Analyzer"
+        "# LLM4Models UML/OCL Extractor"
     )
 
     gr.Markdown(
-        "Select the model configuration, press "
-        "**Load Model**, then analyze your code."
+        "Infer UML class diagrams and OCL specifications "
+        "from Java and Python programs."
     )
 
-    # ========================================================
-    # Model / Language
-    # ========================================================
+    gr.Markdown(
+        """
+        ## Before You Start
+
+        This system is designed primarily for object-oriented
+        Java and Python programs.
+        """
+    )
+
+    limitations_text = gr.Textbox(
+    label="Supported Programs and Limitations",
+    value="""• Supported languages: Java and Python.
+
+• UML Class Diagram extraction is intended primarily for object-oriented programs containing classes, interfaces, attributes, methods, constructors, and relationships.
+
+• Purely procedural programs or scripts without meaningful class/object-oriented structure are not appropriate for UML Class Diagram extraction.
+
+• Programs consisting mainly of standalone functions, data-processing pipelines, configuration files, or other non-object-oriented structures may not produce meaningful UML class diagrams.
+
+• Highly dynamic code, reflection, metaprogramming, runtime-generated classes, and runtime modifications may not be fully represented.
+
+• Incomplete, syntactically invalid, truncated, or partially generated source code may produce incomplete results.
+
+• External-library behavior that is not visible in the supplied source code may not be represented completely.
+
+• The generated UML represents structure inferred from the supplied source code and does not guarantee the complete runtime architecture.
+
+• For best results, provide complete and reasonably self-contained object-oriented Java or Python source code.""",
+    lines=8,
+    max_lines=8,
+    interactive=False,
+    show_copy_button=False,
+    scale=1,
+)
+
+    # -------------------------------------------------------------------------
+    # MODEL CONFIGURATION
+    # -------------------------------------------------------------------------
 
     with gr.Row():
-
-        model_family = gr.Dropdown(
-            label="Model",
-            choices=MODEL_FAMILIES,
-            value="Mistral",
-            scale=1,
-        )
 
         language = gr.Dropdown(
-            label="Language",
             choices=LANGUAGES,
-            value="Mamba",
-            scale=1,
+            value="Java",
+            label="Language",
         )
 
-    # ========================================================
-    # Task / Version / Model Type
-    # ========================================================
+        task = gr.Dropdown(
+            choices=TASKS,
+            value="UML",
+            label="Task",
+        )
 
     with gr.Row():
 
-        task = gr.Dropdown(
-            label="Task",
-            choices=["Flaws + Refactoring"],
-            value="Flaws + Refactoring",
-            interactive=False,
-            scale=1,
-        )
-
         model_version = gr.Dropdown(
-            label="Model Version",
-            choices=["1", "2"],
+            choices=[
+                "1",
+                "2",
+                "3",
+                "4",
+            ],
             value="2",
-            interactive=True,
-            scale=1,
+            label="Model Version",
         )
 
         model_type = gr.Dropdown(
-            label="Model Type",
             choices=MODEL_TYPES,
             value="LoRA Adapter",
-            scale=1,
+            label="Model Type",
         )
 
-    # ========================================================
-    # Load Model
-    # ========================================================
+    # -------------------------------------------------------------------------
+    # MODEL
+    # -------------------------------------------------------------------------
 
-    with gr.Row():
-
-        load_button = gr.Button(
-            "Load Model",
-            variant="primary",
-        )
+    load_model_button = gr.Button(
+        "Load Model",
+        variant="primary",
+    )
 
     model_status = gr.Textbox(
-        label="Loaded Model",
+        label="Model Status",
         value="No model loaded.",
-        lines=4,
-        max_lines=8,
+        lines=7,
         interactive=False,
     )
 
-    # ========================================================
-    # Program file
-    # ========================================================
+    # -------------------------------------------------------------------------
+    # PROGRAM INPUT
+    # -------------------------------------------------------------------------
+
+    program_directory = gr.Textbox(
+        label="Program Directory",
+        placeholder="Enter directory containing Java/Python files",
+    )
+
+    load_directory_button = gr.Button(
+        "Load Program Directory",
+    )
 
     program_file = gr.File(
-        label="Load Program",
+        label="Load Program File",
         file_types=[
-            ".txt",
+            ".java",
             ".py",
-            ".mamba",
-            ".kcl",
+            ".txt",
         ],
         type="filepath",
     )
 
-    # ========================================================
-    # Program editor
-    # ========================================================
-
-    code_input = gr.Textbox(
-        label="Program",
-        placeholder=(
-            "Paste your code here or select a program file "
-            "above. You can modify the code before Analyze."
-        ),
-        lines=16,
-        max_lines=30,
-        interactive=True,
+    program = gr.Code(
+        label="Java / Python Program",
+        language= None, #"java",
+        lines=20,
     )
 
-    # ========================================================
-    # Analyze + Clear
-    # ========================================================
+    # -------------------------------------------------------------------------
+    # STAGE 1: PREPROCESSING
+    # -------------------------------------------------------------------------
+
+    gr.Markdown(
+        "## Stage 1 — Pre-processing"
+    )
+
+    with gr.Row():
+
+        preprocess_button = gr.Button(
+            "Pre-process",
+            interactive=False,
+        )
+
+        preprocess_status = gr.Textbox(
+            label="Pre-processing Status",
+            interactive=False,
+        )
+
+    # -------------------------------------------------------------------------
+    # STAGE 2: INFERENCE
+    # -------------------------------------------------------------------------
+
+    gr.Markdown(
+        "## Stage 2 — LLM4Models Inference"
+    )
 
     with gr.Row():
 
         analyze_button = gr.Button(
             "Analyze",
             variant="primary",
+            interactive=False,
         )
 
         clear_button = gr.Button(
             "Clear",
-            variant="secondary",
+            
         )
 
-    # ========================================================
-    # Output
-    # ========================================================
 
-    output_box = gr.Textbox(
-        label="Analysis Output",
-        lines=18,
-        max_lines=35,
+    result = gr.Textbox(
+        label="JSON Result",
+        lines=15,
         interactive=False,
     )
 
-    # ========================================================
-    # Model family changed
-    # ========================================================
+    inference_metrics = gr.Textbox(
+        label="Inference Metrics",
+        lines=8,
+        interactive=False,
+    )
+   # -------------------------------------------------------------------------
+    # STAGE 3: POST PROCESSING
+    # -------------------------------------------------------------------------
 
-    model_family.change(
-        fn=model_family_changed,
+    gr.Markdown(
+        "## Stage 3 — Post-processing"
+    )
+
+    uml_detail = gr.Dropdown(
+        choices=[
+            "Detailed Class Diagram",
+            "Outline Class Diagram",
+        ],
+        value=None,
+        label="UML Diagram Type",
+        interactive=False,
+        visible=False,
+    )
+
+    uml_parameters = gr.Dropdown(
+        choices=[
+            "Methods with Parameter Names and Types",
+            "Methods with Parameter Types",
+            "Methods Only",
+        ],
+        value=None,
+        label="Method Parameters",
+        interactive=False,
+        visible=False,
+    )
+
+    uml_format = gr.Dropdown(
+        choices=["PNG", "PDF", "SVG"],
+        value=None,
+        label="Output Format",
+        interactive=False,
+        visible=False,
+    )
+
+    with gr.Row():
+
+        postprocess_uml_button = gr.Button(
+            "Post-process UML",
+            interactive=False,
+        )
+
+        postprocess_ocl_button = gr.Button(
+            "Post-process OCL",
+            interactive=False,
+        )
+
+
+    uml_image = gr.Image(
+        label="Generated UML Diagram",
+        type="filepath",
+        visible=True,
+    )
+
+    uml_output_file = gr.File(
+        label="Generated UML File",
+        interactive=False,
+        visible=True,
+
+    )
+
+    ocl_result = gr.Textbox(
+        label="Generated OCL",
+        lines=15,
+        interactive=False,
+        visible=False,
+    )
+
+    ocl_output_file = gr.File(
+        label="Generated OCL File",
+        visible=False,
+    )
+
+    postprocess_status = gr.Textbox(
+        label="Post-processing Status",
+        lines=6,
+        interactive=False,
+    )
+
+    program.input(
+        fn=program_input_changed,
+        inputs=[program],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    )
+
+    # -------------------------------------------------------------------------
+    # OUTPUT INFORMATION
+    # -------------------------------------------------------------------------
+
+    gr.Markdown(
+        """
+### Current output files
+
+- `output/output.txt` — raw JSON response from the LLM
+- `output/inference_metrics.txt` — inference metrics
+- `output/Test1.UML` — extracted UML classes
+- `output/Test1.REL` — extracted UML relationships
+- `output/Test1.dot` — Graphviz DOT source
+- `output/Test1.png` / `.pdf` / `.svg` — generated UML diagram
+"""
+    )
+
+    # =========================================================================
+    # EVENTS
+    # =========================================================================
+
+    load_model_button.click(
+        fn=load_selected_model,
         inputs=[
-            model_family,
             language,
             task,
             model_version,
             model_type,
         ],
         outputs=[
-            task,
-            model_version,
-            code_input,
-            program_file,
-            output_box,
             model_status,
+            program,
+            program_file,
+            result,
+            inference_metrics,
+            postprocess_status,
+            uml_image,
+            uml_output_file,
+            ocl_result,
+            ocl_output_file,
+        ],
+    ).then(
+        fn=update_task_outputs,
+        inputs=[task],
+        outputs=[
+            uml_image,
+            uml_output_file,
+            ocl_result,
+            ocl_output_file,
         ],
     )
 
-    # ========================================================
-    # Language changed
-    # ========================================================
+
+    load_directory_button.click(
+        fn=load_program_directory,
+        inputs=[
+            program_directory,
+            language,
+        ],
+        outputs=[
+            program,
+        ],
+    ).then(
+        fn=program_input_changed,
+        inputs=[program],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    )
+
+    program_file.change(
+        fn=load_program_file,
+        inputs=[program_file],
+        outputs=[program],
+    ).then(
+        fn=lambda file: (
+            set_pipeline_state("program", None)
+            if file is not None
+            else set_pipeline_state("clear", None)
+        ),
+        inputs=[program_file],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    )
 
     language.change(
         fn=language_changed,
         inputs=[
-            model_family,
             language,
             task,
             model_version,
             model_type,
         ],
         outputs=[
-            task,
             model_version,
-            code_input,
+            program,
             program_file,
-            output_box,
+            result,
             model_status,
         ],
     )
-
-    # ========================================================
-    # Task changed
-    # ========================================================
 
     task.change(
         fn=task_changed,
         inputs=[
-            model_family,
             language,
             task,
             model_version,
@@ -756,119 +1590,241 @@ with gr.Blocks(
         ],
         outputs=[
             model_version,
-            code_input,
+            program,
             program_file,
-            output_box,
+            result,
             model_status,
+        ],
+    ).then(
+        fn=clear_generated_results,
+        inputs=[],
+        outputs=[
+            inference_metrics,
+            postprocess_status,
+            uml_image,
+            uml_output_file,
+            ocl_result,
+            ocl_output_file,
         ],
     )
 
-    # ========================================================
-    # Version changed
-    # ========================================================
+    task.change(
+        fn=update_task_outputs,
+        inputs=[task],
+        outputs=[
+            uml_image,
+            uml_output_file,
+            ocl_result,
+            ocl_output_file,
+        ],
+    )
+    uml_detail.change(
+        fn=update_uml_parameters,
+        inputs=[uml_detail],
+        outputs=[uml_parameters],
+    ).then(
+        fn=update_uml_postprocess_button,
+        inputs=[
+            task,
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        ],
+        outputs=[postprocess_uml_button],
+    )
+
+    uml_parameters.change(
+        fn=update_uml_postprocess_button,
+        inputs=[
+            task,
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        ],
+        outputs=[postprocess_uml_button],
+    )
+
+    uml_format.change(
+        fn=update_uml_postprocess_button,
+        inputs=[
+            task,
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        ],
+        outputs=[postprocess_uml_button],
+    )
 
     model_version.change(
         fn=version_changed,
         inputs=[
-            model_family,
             language,
             task,
             model_version,
             model_type,
         ],
         outputs=[
-            code_input,
+            program,
             program_file,
-            output_box,
+            result,
             model_status,
         ],
     )
-
-    # ========================================================
-    # Model type changed
-    # ========================================================
 
     model_type.change(
         fn=model_type_changed,
         inputs=[
-            model_family,
             language,
             task,
             model_version,
             model_type,
         ],
         outputs=[
-            code_input,
+            program,
             program_file,
-            output_box,
+            result,
             model_status,
         ],
     )
 
-    # ========================================================
-    # Program file selected
-    # ========================================================
 
-    program_file.change(
-        fn=load_program_file,
-        inputs=program_file,
-        outputs=code_input,
-    )
-
-    # ========================================================
-    # Load Model
-    # ========================================================
-
-    load_button.click(
-        fn=load_selected_model,
+    preprocess_button.click(
+        fn=preprocess_program,
         inputs=[
-            model_family,
+            program,
             language,
-            task,
-            model_version,
-            model_type,
         ],
         outputs=[
-            model_status,
-            code_input,
-            program_file,
-            output_box,
+            preprocess_status,
+            program,
+        ],
+    ).then(
+        fn=lambda task_value: set_pipeline_state("preprocessed", task_value),
+        inputs=[task],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
         ],
     )
-
-    # ========================================================
-    # Analyze
-    # ========================================================
 
     analyze_button.click(
         fn=analyze_code,
-        inputs=[
-            code_input,
-            language,
-            task,
+        inputs=[program, language, task],
+        outputs=[result, inference_metrics,],
+    ).then(
+        fn=lambda task_value: set_pipeline_state(
+            "analyzed",
+            task_value,
+        ),
+        inputs=[task],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
         ],
-        outputs=output_box,
+    ).then(
+        fn=update_uml_controls,
+        inputs=[task],
+        outputs=[
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        ],
     )
 
-    # ========================================================
-    # Clear
-    # ========================================================
+    postprocess_uml_button.click(
+        fn=postprocess_uml,
+        inputs=[
+            language,
+            uml_detail,
+            uml_parameters,
+            uml_format,
+        ],
+        outputs=[
+            postprocess_status,
+            uml_image,
+            uml_output_file,
+        ],
+    ).then(
+        #fn=lambda: set_pipeline_state(
+        #    "postprocessed",
+        #    None,
+        #),
+        fn=set_uml_postprocessed_state,
+        inputs=[],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    )
+
+    postprocess_ocl_button.click(
+        fn=postprocess_ocl,
+        inputs=[],
+        outputs=[
+            postprocess_status,
+            ocl_result,
+            ocl_output_file,
+        ],
+    ).then(
+        fn=lambda: set_pipeline_state(
+            "postprocessed",
+            None,
+        ),
+        inputs=[],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    )
 
     clear_button.click(
         fn=clear_program,
         inputs=[],
         outputs=[
-            code_input,
+            program,
             program_file,
-            output_box,
+            result,
+            inference_metrics,
+            preprocess_status,
+            postprocess_status,
+            uml_image,
+            uml_output_file,
+            ocl_result,
+            ocl_output_file,
+        ],
+    ).then(
+        fn=lambda: set_pipeline_state(
+            "clear",
+            None,
+        ),
+        inputs=[],
+        outputs=[
+            preprocess_button,
+            analyze_button,
+            postprocess_uml_button,
+            postprocess_ocl_button,
+        ],
+    ).then(
+        fn=hide_uml_controls,
+        inputs=[],
+        outputs=[
+            uml_detail,
+            uml_parameters,
+            uml_format,
         ],
     )
 
-
-# ============================================================
-# Application entry point
-# ============================================================
-
+# =============================================================================
+# LAUNCH
+# =============================================================================
 if __name__ == "__main__":
 
     port = int(
@@ -882,4 +1838,3 @@ if __name__ == "__main__":
         server_name="0.0.0.0",
         server_port=port,
     )
-
