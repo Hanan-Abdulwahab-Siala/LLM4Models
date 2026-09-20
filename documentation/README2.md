@@ -163,13 +163,17 @@ Diagram type: Detailed Class Diagram
 Parameters: Methods Only
 Format: PNG
 
-Generated files are:
-output/output.txt
-output/inference_metrics.txt
-output/Test1.UML
-output/Test1.REL
-output/Test1.dot
-output/Test1.png
+###### Generated Files
+
+```text
+output/
+├── output.txt
+├── inference_metrics.txt
+├── Test1.UML
+├── Test1.REL
+├── Test1.dot
+└── Test1.png
+```
 
 ##### OCL Extraction
 ```bash
