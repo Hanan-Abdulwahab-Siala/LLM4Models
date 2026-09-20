@@ -195,9 +195,15 @@ Where choices are:
 
 --model-type field includes "LoRA Adapter" or "Full Model".
 
-Generated files are:
-output/output.txt
-output/inference_metrics.txt
-output/Test1.OCL
+###### Generated Files
 
+```text
+output/
+├── output.txt
+├── inference_metrics.txt
+├── Test1.OCL
+├── Test1.REL
+├── Test1.dot
+└── Test1.png
+```
 ---
