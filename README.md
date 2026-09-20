@@ -101,6 +101,26 @@ Install the dependencies:
 pip install -r requirements.txt
 ```
 
+Then, we need to create a Conda environment for Graphviz
+```bash
+cd ~
+conda create -n graphviz-env -c conda-forge graphviz
+```
+Then y and then activate the Graphviz environment:
+```bash
+conda activate graphviz-env
+```
+
+```bash
+conda deactivate
+```
+
+To add Graphviz to your PATH while (venvs) is active, run:
+```bash
+echo 'export PATH="$HOME/.conda/envs/graphviz-env/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
 ---
 ## Running
 
