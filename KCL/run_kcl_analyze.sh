@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=mamba-analyzer
+#SBATCH --job-name=javapy-extractor
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
@@ -8,15 +8,15 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=04:00:00
-#SBATCH --output=/scratch/users/%u/mamba-%j.out
-#SBATCH --error=/scratch/users/%u/mamba-%j.err
+#SBATCH --output=/scratch/users/%u/javapy-%j.out
+#SBATCH --error=/scratch/users/%u/javapy-%j.err
 
 export PYTHONNOUSERSITE=1
 
 set -e
 
 echo "========================================"
-echo "Unified Code Analyzer - KCL GPU Job"
+echo "LLM4Models - KCL GPU Job"
 echo "========================================"
 
 echo
@@ -54,9 +54,9 @@ module load cuda
 # Project
 # --------------------------------------------------
 
-cd "$HOME/Code-Analyzer"
+cd "$HOME/LLM4Models"
 
-source .venv/bin/activate
+source ~/venvs/bin/activate
 
 # --------------------------------------------------
 # Python
@@ -94,54 +94,19 @@ print('GPU:', torch.cuda.get_device_name(0))
 "
 
 # --------------------------------------------------
-# Run analyzer
+# Run Analyzer
 # --------------------------------------------------
 
 echo
 echo "Running inference..."
 
-# ----------------------------------------------------------------
-# MAMBA
-# Mamba has ONE combined task:
-# Flaws + Refactoring
-# ----------------------------------------------------------------
-
-python analyze.py \
-    input/sample.txt \
-    --language Mamba \
-    --model-version 2 \
-    --model-type "LoRA Adapter" \
-    --output output/output.txt
-
-# ----------------------------------------------------------------
-# For Python Flaw Detection use:
-#
-# python analyze.py \
-#     input/Test1.py \
-#     --language Python \
-#     --task "Flaw Detection" \
-#     --model-version 2 \
-#     --model-type "LoRA Adapter" \
-#     --output output/output.txt
-#
-# ----------------------------------------------------------------
-# For Python Refactoring use:
-#
-# python analyze.py \
-#     input/Test1.py \
-#     --language Python \
-#     --task "Refactoring" \
-#     --model-version 1 \
-#     --model-type "LoRA Adapter" \
-#     --output output/output.txt
-#
-# ----------------------------------------------------------------
-
 # --------------------------------------------------
-# Finished
+# Choose ONE command below starting with python and uncomment it.
 # --------------------------------------------------
+
 
 echo
 echo "========================================"
 echo "Job completed successfully"
 echo "========================================"
+# --------------------------------------------------
