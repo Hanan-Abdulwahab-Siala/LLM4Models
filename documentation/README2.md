@@ -167,12 +167,12 @@ Format: PNG
 
 ```text
 output/
-├── output.txt
-├── inference_metrics.txt
-├── Test1.UML
-├── Test1.REL
-├── Test1.dot
-└── Test1.png
+├── output.txt                # raw JSON response from the LLM
+├── inference_metrics.txt     # inference metrics
+├── Test1.UML                 # extracted UML classes
+├── Test1.REL                 # extracted UML relationships
+├── Test1.dot                 # Graphviz DOT source
+└── Test1.png                 # Test1.png / .pdf / .svg — generated UML diagram
 ```
 
 ##### OCL Extraction
@@ -202,8 +202,5 @@ output/
 ├── output.txt
 ├── inference_metrics.txt
 ├── Test1.OCL
-├── Test1.REL
-├── Test1.dot
-└── Test1.png
 ```
 ---
