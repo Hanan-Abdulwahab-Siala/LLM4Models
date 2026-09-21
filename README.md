@@ -111,16 +111,69 @@ Then type y, and then activate the Graphviz environment:
 conda activate graphviz-env
 ```
 
+Check the location of dot:
+```bash
+which dot
+```
+You should see:
+```bash
+/users/k12345/.conda/envs/graphviz-env/bin/dot
+```
+Then verify the version:
+```bash
+dot -V
+```
+You should see:
+```bash
+dot - graphviz version 12.x.x
+```
+Then leave the Graphviz Conda environment:
 ```bash
 conda deactivate
 ```
-
-To add Graphviz to your PATH while (venvs) is active, run:
+And activate your Python virtual environment:
 ```bash
-echo 'export PATH="$HOME/.conda/envs/graphviz-env/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+. ~/venvs/bin/activate
+```
+And verify Python:
+```bash
+which python
+```
+You should see:
+```bash
+~/venvs/bin/python
+```
+Install the Python Graphviz package while ~/venvs is activated; run:
+```bash
+pip install graphviz
+```
+You can verify the installation by running:
+```bash
+pip show graphviz
 ```
 
+And finally, configure the location of dot in LLM4Models/graphviz_service.py by explicitly telling the Graphviz Python package where the dot executable is located. Please modify the following code in LLM4Models/graphviz_service.py as:
+
+```bash
+DEFAULT_GRAPHVIZ_DOT = ("/users/<USERNAME>/.conda/envs/graphviz-env/bin/dot") 
+```
+where <USERNAME> is the username of the account running the program.
+
+You can find the exact path automatically with:
+
+```bash
+conda activate graphviz-env
+which dot
+```
+You should see:
+
+```bash
+/users/k12345/.conda/envs/graphviz-env/bin/dot
+```
+Take it and put it in LLM4Models/graphviz_service.py as:
+```bash
+DEFAULT_GRAPHVIZ_DOT = ("/users/k12345/.conda/envs/graphviz-env/bin/dot")
+```
 ---
 ## Running
 
