@@ -199,8 +199,9 @@ Where choices are:
 
 ```text
 output/
-├── output.txt
-├── inference_metrics.txt
-├── Test1.OCL
+├── output.txt              # raw JSON response from the LLM
+├── inference_metrics.txt   # inference metrics
+├── Test1.OCL               # generated OCL specification
 ```
 ---
+
