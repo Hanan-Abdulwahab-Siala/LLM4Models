@@ -22,9 +22,10 @@ LLM4Models/
 ├── README.md
 ├── requirements.txt
 │
-├── analyze.py
+├── extract.py
 ├── app.py
 ├── model_service.py
+├── graphviz_service.py
 │
 ├── input/
 │   └── sample.java
@@ -34,7 +35,7 @@ LLM4Models/
 │   └── output.txt
 │
 └── KCL/
-    └── run_kcl_analyze.sh
+    └── run_kcl_extract.sh
     └── run_kcl_gradio.sh
 
 ```
