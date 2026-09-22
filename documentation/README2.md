@@ -48,7 +48,7 @@ ls
 You should see files such as:
 
 ```
-analyze.py
+extract.py
 app.py
 input/
 ...
@@ -132,25 +132,25 @@ It should point to something similar to:
 
 #### 6. Run the Program
 
-Run the analyze program using one of the following:
+Run the extract program using one of the following:
 
 ##### UML Extraction
 For a Java/Python file:
 ```bash
-python analyze.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+python extract.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 
-python analyze.py input/sample.py --language Python --task "UML" --model-version 1 --model-type "LoRA Adapter"
+python extract.py input/sample.py --language Python --task "UML" --model-version 1 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
+python extract.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
 ```
 
 For Directory:
 ```bash
-python analyze.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+python extract.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 ```
 
 Where choices are:
@@ -194,19 +194,19 @@ output/
 
 ##### OCL Extraction
 ```bash
-python analyze.py input/sample.java --language Java --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "OCL" --model-version 1 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.java --language Java --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "OCL" --model-version 2 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.py --language Python --task "OCL" --model-version 1 --model-type "LoRA Adapter"
+python extract.py input/sample.py --language Python --task "OCL" --model-version 1 --model-type "LoRA Adapter"
 
-python analyze.py input/sample.py --language Python --task "OCL" --model-version 2 --model-type "LoRA Adapter"
+python extract.py input/sample.py --language Python --task "OCL" --model-version 2 --model-type "LoRA Adapter"
 ```
-Where choices are:
+Where the choices are:
 
 --language field includes Java or Python.
 
---task field "OCL".
+--task field: "OCL".
 
 --model-version field includes 1 or 2.
 
