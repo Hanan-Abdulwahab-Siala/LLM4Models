@@ -43,7 +43,7 @@ ssh -m hmac-sha2-512 k12345@hpc.example.org
 
 #### 2. Go to the Project Directory
 
-Move into the Code Analyzer project:
+Move into the LLM4Models project:
 
 ```bash
 cd ~/LLM4Models
@@ -58,7 +58,7 @@ ls
 You should see files such as:
 
 ```
-analyze.py
+extract.py
 app.py
 input/
 ...
@@ -155,7 +155,7 @@ python app.py
 ---
 
 #### 7. Open a Second CMD Window
-Now go to your Windows PC and open a second CMD window, and put:
+Now go to your Windows PC and open a second CMD window, and enter:
 
 ```bash
 for /f "delims=" %N in ('ssh -m hmac-sha2-512 USER@HPC_HOST "squeue -n JOB_NAME -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USER@HPC_HOST
@@ -165,7 +165,7 @@ or
 for /f "delims=" %N in ('ssh -m hmac-sha2-512 USER@HPC_HOST "squeue -j JOB_ID -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USER@HPC_HOST
 ```
 Where:
- -  USER → your HPC username
+ - USER → your HPC username
  - HPC_HOST → your HPC login host
  - JOB_NAME → your Slurm job name
  - LOCAL_PORT → local port, e.g. 7860
