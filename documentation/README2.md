@@ -153,11 +153,11 @@ For Directory:
 python extract.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 ```
 
-Where choices are:
+Where the choices are:
 
 --language field includes Java or Python,
 
---task field "UML".
+--task field: "UML".
 
 --model-version field includes 1, 2, 3, or 4.
 
