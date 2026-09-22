@@ -48,7 +48,7 @@ ls
 You should see files such as:
 
 ```
-analyze.py
+extract.py
 app.py
 input/
 ...
@@ -87,25 +87,25 @@ cat input/sample.py
 Run:
 
 ```bash
-cat KCL/run_kcl_analyze.sh
+cat KCL/run_kcl_extract.sh
 ```
 
 Then:
 
 ```bash
-chmod +x KCL/run_kcl_analyze.sh
+chmod +x KCL/run_kcl_extract.sh
 ```
 
 Check the file:
 
 ```bash
-ls -l KCL/run_kcl_analyze.sh
+ls -l KCL/run_kcl_extract.sh
 ```
 
 You should see executable permissions, for example:
 
 ```
--rwxr-xr-x ... run_kcl_analyze.sh
+-rwxr-xr-x ... run_kcl_extract.sh
 ```
 
 ---
@@ -115,7 +115,7 @@ You should see executable permissions, for example:
 Submit the script using:
 
 ```bash
-sbatch KCL/run_kcl_analyze.sh
+sbatch KCL/run_kcl_extract.sh
 ```
 
 You should receive something similar to:
