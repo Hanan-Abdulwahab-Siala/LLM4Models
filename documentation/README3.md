@@ -48,7 +48,7 @@ ls
 You should see files such as:
 
 ```
-analyze.py
+extract.py
 app.py
 input/
 ...
@@ -142,7 +142,7 @@ or
 for /f "delims=" %N in ('ssh -m hmac-sha2-512 USER@HPC_HOST "squeue -j JOB_ID -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USER@HPC_HOST
 ```
 Where:
- -  USER → your HPC username
+ - USER → your HPC username
  - HPC_HOST → your HPC login host
  - JOB_NAME → your Slurm job name
  - LOCAL_PORT → local port, e.g. 7860
