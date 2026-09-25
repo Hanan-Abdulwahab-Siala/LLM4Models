@@ -207,10 +207,7 @@ Please review the applicable model licenses and terms before redistributing mode
 
 ## Contact
 
-**Student:** Hanan Abdulwahab Siala  
-hanan.siala@kcl.ac.uk
-
-**Supervisor:** Kevin Lano  
-kevin.lano@kcl.ac.uk
+**Student:** Hanan Abdulwahab Siala &nbsp;&nbsp;&nbsp;&nbsp; **Supervisor:** Kevin Lano  
+hanan.siala@kcl.ac.uk &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; kevin.lano@kcl.ac.uk
 
 King's College London
