@@ -288,6 +288,6 @@ This allows the java/Python Code Extractor to run as a GPU-accelerated SLURM job
 ---
 
 **Note**
-You can modify the `KCL/run_kcl_analyze.sh` file to perform the requested task, as described in the second method and explained in the shell script.
+You can modify the `KCL/run_kcl_extract.sh` file to perform the requested task, as described in the second method and explained in the shell script.
 
 ---
