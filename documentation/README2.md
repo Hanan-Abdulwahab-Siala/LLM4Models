@@ -172,9 +172,9 @@ You can choose the --uml-format field from "PNG", "PDF", and "SVG".
 
 Default values are:
 
-Diagram type: Detailed Class Diagram
-Parameters: Methods Only
-Format: PNG
+- Diagram type: Detailed Class Diagram
+- Parameters: Methods Only
+- Format: PNG
 
 ###### Generated Files
 
