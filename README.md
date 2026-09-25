@@ -183,7 +183,7 @@ DEFAULT_GRAPHVIZ_DOT = ("/users/k12345/.conda/envs/graphviz-env/bin/dot")
 ### 3. [Running Using KCL CREATE HPC Workflow with Gradio](./documentation/README3.md)
 ### 4. [Running Using KCL CREATE HPC Workflow without Gradio](./documentation/README4.md)
 
-If you are not using the KCL CREATE environment, you can ignore the HPC scripts (3 and 4) and run the project using the normal Python environment.
+If you are not using the KCL CREATE environment, ignore the HPC scripts (3 and 4) and run the project in a standard Python environment.
 
 ---
 
@@ -207,13 +207,10 @@ Please review the applicable model licenses and terms before redistributing mode
 
 ## Contact
 
-<table>
-  <tr>
-    <td><strong>Student:</strong> Hanan Abdulwahab Siala<br>
-    hanan.siala@kcl.ac.uk</td>
-    <td><strong>Supervisor:</strong> Kevin Lano<br>
-    kevin.lano@kcl.ac.uk</td>
-  </tr>
-</table>
+**Student:** Hanan Abdulwahab Siala  
+hanan.siala@kcl.ac.uk
+
+**Supervisor:** Kevin Lano  
+kevin.lano@kcl.ac.uk
 
 King's College London
