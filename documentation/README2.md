@@ -155,16 +155,16 @@ python extract.py input/ --language Java --task "UML" --model-version 2 --model-
 
 Where the choices are:
 
-- --language field includes Java or Python,
+- --language field includes Java or Python.
 - --task field: "UML".
 - --model-version field includes 1, 2, 3, or 4.
 - --model-type field includes "LoRA Adapter" or "Full Model".
 - --uml-detail field includes "Detailed Class Diagram" and "Outline Class Diagram".
 
 If you choose --uml-detail "Detailed Class Diagram" only, you can include: 
-- --uml-parameters "Methods Only"
-- --uml-parameters "Methods with Parameter Names and Types"
-- --uml-parameters "Methods with Parameter Types"
+- --uml-parameters "Methods Only".
+- --uml-parameters "Methods with Parameter Names and Types".
+- --uml-parameters "Methods with Parameter Types".
 
 If you choose --uml-detail "Outline Class Diagram", do not select --uml-parameters.
 
@@ -172,9 +172,9 @@ You can choose the --uml-format field from "PNG", "PDF", and "SVG".
 
 Default values are:
 
-- Diagram type: Detailed Class Diagram
-- Parameters: Methods Only
-- Format: PNG
+- Diagram type: Detailed Class Diagram.
+- Parameters: Methods Only.
+- Format: PNG.
 
 ###### Generated Files
 
