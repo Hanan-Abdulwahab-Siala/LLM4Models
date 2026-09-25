@@ -28,18 +28,22 @@ LLM4Models/
 ├── graphviz_service.py
 │
 ├── input/
-│   └── sample.java
+│   ├── sample.java
 │   └── sample.py
 │
 ├── output/
-│   └── output.txt
+│   ├── output.txt                # raw JSON response from the LLM
+│   ├── inference_metrics.txt     # inference metrics
+│   ├── Test1.UML                 # extracted UML classes
+│   ├── Test1.REL                 # extracted UML relationships
+│   ├── Test1.dot                 # Graphviz DOT source
+│   ├── Test1.png                 # Test1.png / .pdf / .svg — generated UML diagram
+│   └── Test1.OCL                 # generated OCL specification
 │
 └── KCL/
-    └── run_kcl_extract.sh
+    ├── run_kcl_extract.sh
     └── run_kcl_gradio.sh
-
 ```
-
 ---
 
 ## Requirements
