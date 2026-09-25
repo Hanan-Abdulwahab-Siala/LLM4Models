@@ -189,7 +189,7 @@ If you are not using the KCL CREATE environment, you can ignore the HPC scripts 
 
 ## Supported Models
 
-The project uses models hosted on Hugging Face. You may need to make sure the required model repositories are accessible from your environment.
+The project uses models hosted on Hugging Face. Make sure the required model repositories are accessible from your environment.
 
 Model identifiers used by the project include:
 
@@ -207,7 +207,13 @@ Please review the applicable model licenses and terms before redistributing mode
 
 ## Contact
 
-**Student:** Hanan Abdulwahab Siala &nbsp;&nbsp;&nbsp;&nbsp; **Supervisor:** Kevin Lano
-hanan.siala@kcl.ac.uk &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; kevin.lano@kcl.ac.uk
+<table>
+  <tr>
+    <td><strong>Student:</strong> Hanan Abdulwahab Siala<br>
+    hanan.siala@kcl.ac.uk</td>
+    <td><strong>Supervisor:</strong> Kevin Lano<br>
+    kevin.lano@kcl.ac.uk</td>
+  </tr>
+</table>
 
 King's College London
