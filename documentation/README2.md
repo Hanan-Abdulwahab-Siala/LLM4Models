@@ -134,7 +134,7 @@ It should point to something similar to:
 
 Run the extract program using one of the following:
 
-> ##### UML Extraction
+> #### UML Extraction
 For a Java/Python file:
 ```bash
 python extract.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
@@ -188,7 +188,7 @@ output/
 └── Test1.png                 # Test1.png / .pdf / .svg — generated UML diagram
 ```
 
-> ##### OCL Extraction
+> #### OCL Extraction
 ```bash
 python extract.py input/sample.java --language Java --task "OCL" --model-version 1 --model-type "LoRA Adapter"
 
