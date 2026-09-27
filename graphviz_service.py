@@ -6,6 +6,7 @@ University: King's College London
 Date: 27-09-2026
 """
 # ------------------------------------------------------------
+# ------------------------------------------------------------
 import json
 import os
 import shutil
@@ -242,66 +243,66 @@ def generate_dot_file_for_classes_and_interfaces(path, json_file, json_file2, de
          else:
             attributes += ('<tr><td align="left"></td></tr>\n')
 # ------------------------------------------------------------
-        constructors = item.get("constructors", [])
-        has_constructor = False
-        if constructors:
-           has_constructor = True
-           first = True
-           for constructor in constructors:
-              if not isinstance(constructor, dict):
-                 continue
-              if first:
-                 front_constructor = '            <tr><td align="left">'
-                 first = False
-              else:
-                 front_constructor = '<br align="left"/>'
-              visibility_constructor = (constructor.get("Visibility", ""))
-              constructor_name = str(constructor.get("name", name))
-              temp = (' ' + check_modifier(visibility_constructor) + ' ' + constructor_name + '(')
-              parameter_text = format_parameters(constructor.get("parameters", []), full_parameters)
-              temp += (parameter_text + ') ' )
-              operations += ( front_constructor + temp )
+         constructors = item.get("constructors", [])
+         has_constructor = False
+         if constructors:
+            has_constructor = True
+            first = True
+            for constructor in constructors:
+               if not isinstance(constructor, dict):
+                  continue
+               if first:
+                  front_constructor = '            <tr><td align="left">'
+                  first = False
+               else:
+                  front_constructor = '<br align="left"/>'
+               visibility_constructor = (constructor.get("Visibility", ""))
+               constructor_name = str(constructor.get("name", name))
+               temp = (' ' + check_modifier(visibility_constructor) + ' ' + constructor_name + '(')
+               parameter_text = format_parameters(constructor.get("parameters", []), full_parameters)
+               temp += (parameter_text + ') ' )
+               operations += ( front_constructor + temp )
 # ------------------------------------------------------------
-        methods = item.get("methods", [])
-        if methods:
-           if has_constructor:
-              first = False
-           else:
-              first = True
-           for method in methods:
-              if not isinstance(method, dict):
-                 continue
-              if first:
-                 front_method = '            <tr><td align="left">'
-                 first = False
-              else:
-                 front_method = '<br align="left"/>'
-              visibility_method = (method.get("Visibility", ""))
-              method_name = str(method.get("name", ""))
-              temp = (' ' + check_modifier(visibility_method) + ' ' + method_name + '(')
-              parameter_text = format_parameters(method.get("parameters", []), full_parameters)
-              temp += parameter_text + ')'
-              if full_parameters == "1":
-                 return_type = method.get("returnType", "")
-                 if isinstance(return_type, list):
-                    return_type = "[]"
-                 if return_type:
-                    temp += (': ' + str(return_type) + ' ')
-                 else:
-                    temp += ' '
-              else:
-                 temp += ' '
-              if method.get("IsAbstract", "") in ["abstract", "abstractABC"]:
-                 temp = '<i>' + temp + '</i>'
-              if method.get("IsStatic", "") == "static":
-                 temp = '<u>' + temp + '</u>'
-              operations += (front_method + temp)
-           operations += ('<br align="left"/></td></tr>\n')
-        else:
-           if has_constructor:
-              operations += ('<br align="left"/></td></tr>\n')
-           else:
-              operations += '            <tr><td align="left"></td></tr>\n'
+         methods = item.get("methods", [])
+         if methods:
+            if has_constructor:
+               first = False
+            else:
+               first = True
+            for method in methods:
+               if not isinstance(method, dict):
+                  continue
+               if first:
+                  front_method = '            <tr><td align="left">'
+                  first = False
+               else:
+                  front_method = '<br align="left"/>'
+               visibility_method = (method.get("Visibility", ""))
+               method_name = str(method.get("name", ""))
+               temp = (' ' + check_modifier(visibility_method) + ' ' + method_name + '(')
+               parameter_text = format_parameters(method.get("parameters", []), full_parameters)
+               temp += parameter_text + ')'
+               if full_parameters == "1":
+                  return_type = method.get("returnType", "")
+                  if isinstance(return_type, list):
+                     return_type = "[]"
+                  if return_type:
+                     temp += (': ' + str(return_type) + ' ')
+                  else:
+                     temp += ' '
+               else:
+                  temp += ' '
+               if method.get("IsAbstract", "") in ["abstract", "abstractABC"]:
+                  temp = '<i>' + temp + '</i>'
+               if method.get("IsStatic", "") == "static":
+                  temp = '<u>' + temp + '</u>'
+               operations += (front_method + temp)
+            operations += ('<br align="left"/></td></tr>\n')
+         else:
+            if has_constructor:
+               operations += ('<br align="left"/></td></tr>\n')
+            else:
+               operations += '            <tr><td align="left"></td></tr>\n'
 # ------------------------------------------------------------
       dot_text += (attributes + operations + '        </table>> ];\n')
 # ------------------------------------------------------------
