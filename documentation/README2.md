@@ -149,7 +149,7 @@ python extract.py input/sample.py --language Python --task "UML" --model-version
 python extract.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
 ```
 
-For Directory:
+For directory:
 ```bash
 python extract.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 ```
