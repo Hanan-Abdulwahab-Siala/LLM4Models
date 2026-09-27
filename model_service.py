@@ -404,18 +404,18 @@ def post_process_uml(input_file, output_directory, language):
       }
 # ------------------------------------------------------------
 def clean_ocl(lines):
-    text = "".join(lines)
-    while True:
-       old_text = text
-       text = re.sub(r';[ \t]*;', ';', text)
-       text = re.sub(r';[ \t]*else', 'else', text)
-       text = re.sub(r';[ \t]*skip', '', text)
-       text = re.sub(r'skip[ \t]*;', '', text)
-       text = re.sub(r'\([ \t]*skip[ \t]*;', '(', text)
-       text = re.sub(r'skip[ \t]*;[ \t]*\(', '(', text)
-       text = re.sub(r';[ \t]*\)', ')', text)
-       if text == old_text:
-          break
+   text = "".join(lines)
+   while True:
+      old_text = text
+      text = re.sub(r';[ \t]*;', ';', text)
+      text = re.sub(r';[ \t]*else', 'else', text)
+      text = re.sub(r';[ \t]*skip', '', text)
+      text = re.sub(r'skip[ \t]*;', '', text)
+      text = re.sub(r'\([ \t]*skip[ \t]*;', '(', text)
+      text = re.sub(r'skip[ \t]*;[ \t]*\(', '(', text)
+      text = re.sub(r';[ \t]*\)', ')', text)
+      if text == old_text:
+         break
    return text.strip()
 # ------------------------------------------------------------
 def process_ocl_file(input_file, output_file):
