@@ -59,8 +59,8 @@ def update_output_files(task_value):
 - `output/Test1.dot` — Graphviz DOT source
 - `output/Test1.png` / `.pdf` / `.svg` — generated UML diagram
 """
-    if task_value == "OCL":
-       return """
+   if task_value == "OCL":
+      return """
 ### Current output files
 
 - `output/output.txt` — raw JSON response from the LLM
