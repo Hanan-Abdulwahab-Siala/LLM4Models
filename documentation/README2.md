@@ -161,16 +161,16 @@ Where the choices are:
 - --model-type field includes "LoRA Adapter" or "Full Model".
 - --uml-detail field includes "Detailed Class Diagram" and "Outline Class Diagram".
 
-If you choose --uml-detail "Detailed Class Diagram" only, you can include: 
+> If you choose --uml-detail "Detailed Class Diagram" only, you can include: 
 - --uml-parameters "Methods Only".
 - --uml-parameters "Methods with Parameter Names and Types".
 - --uml-parameters "Methods with Parameter Types".
 
-If you choose --uml-detail "Outline Class Diagram", do not select --uml-parameters.
+> If you choose --uml-detail "Outline Class Diagram", do not select --uml-parameters.
 
-You can choose the --uml-format field from "PNG", "PDF", and "SVG".
+> You can choose the --uml-format field from "PNG", "PDF", and "SVG".
 
-Default values are:
+> Default values are:
 
 - Diagram type: Detailed Class Diagram.
 - Parameters: Methods Only.
