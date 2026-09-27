@@ -1,4 +1,11 @@
 # ------------------------------------------------------------
+"""
+Author: Hanan Abdulwahab Siala
+Supervisor: Kevin Lano
+University: King's College London
+Date: 27-09-2026
+"""
+# ------------------------------------------------------------
 import json
 import os
 import shutil
