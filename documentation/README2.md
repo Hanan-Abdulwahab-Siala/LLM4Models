@@ -134,6 +134,7 @@ It should point to something similar to:
 
 Run the extract program using one of the following:
 
+
 > #### UML Extraction
 For a Java/Python file:
 ```bash
