@@ -6,9 +6,8 @@ The Gradio interface can be used to:
 - Select LoRA or full model
 - Enter Java/Python code
 - Run the extract program
-- View detected flaws
-- View refactored versions
-- View inference information
+- View UML class diagram
+- View OCL specifications
 
 Please follow these instructions:  
 
