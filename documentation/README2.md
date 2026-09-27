@@ -138,20 +138,17 @@ Run the extract program using one of the following:
 > #### UML Extraction
 For a Java/Python file:
 ```bash
-python extract.py input/sample.java --language Java --task "UML" --model-version 1 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "UML" --model-version 4 --model-type "LoRA Adapter"
 
-python extract.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter"
+python extract.py input/sample.java --language Java --task "UML" --model-version 4 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 
-python extract.py input/sample.java --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+python extract.py input/sample.py --language Python --task "UML" --model-version 4 --model-type "LoRA Adapter"
 
-python extract.py input/sample.py --language Python --task "UML" --model-version 1 --model-type "LoRA Adapter"
-
-python extract.py input/sample.py --language Python --task "UML" --model-version 2 --model-type "LoRA Adapter"
 ```
 
 For directory:
 ```bash
-python extract.py input/ --language Java --task "UML" --model-version 2 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
+python extract.py input/ --language Java --task "UML" --model-version 4 --model-type "LoRA Adapter" --uml-detail "Detailed Class Diagram" --uml-parameters "Methods Only" --uml-format "PNG"
 ```
 
 Where the choices are:
