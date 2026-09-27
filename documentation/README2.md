@@ -176,7 +176,7 @@ Where the choices are:
 - Parameters: Methods Only.
 - Format: PNG.
 
->> Generated Files
+> **Generated Files**
 
 ```text
 output/
@@ -208,7 +208,7 @@ Where the choices are:
 
 --model-type field includes "LoRA Adapter" or "Full Model".
 
->> Generated Files
+> **Generated Files**
 
 ```text
 output/
