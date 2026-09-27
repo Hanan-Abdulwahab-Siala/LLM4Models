@@ -162,7 +162,7 @@ And finally, configure the location of dot in LLM4Models/graphviz_service.py by 
 ```bash
 DEFAULT_GRAPHVIZ_DOT = ("/users/<USERNAME>/.conda/envs/graphviz-env/bin/dot") 
 ```
-where "<USERNAME>" is the username of the account running the program.
+where &lt;USERNAME&gt; is the username of the account running the program.
 
 You can find the exact path automatically with:
 
