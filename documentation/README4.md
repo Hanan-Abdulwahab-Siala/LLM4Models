@@ -256,7 +256,7 @@ Finally, if everything succeeds:
 
 ```
 ========================================
-Job completed
+Job completed successfully
 ========================================
 ```
 
