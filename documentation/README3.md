@@ -129,8 +129,20 @@ JOBID=12345678
 
 Your JOBID will be different each time you submit a new job.
 
+Wait until the job is running:
+
+```bash
+squeue -j 12345678
+```
+Your output will look like:
+```bash
+JOBID       PARTITION   NAME         USER    ST   NODELIST
+12345678    gpu         LLM4Models   ...     R    gpu-node-42
+```
+
 ---
-#### 6. Open the Tunnel Automatically
+
+#### 6. Open the Tunnel
 
 Now go to your Windows PC and open a second CMD window, and enter:
 
