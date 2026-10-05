@@ -221,7 +221,7 @@ Where the choices are:
 output/
 ├── output.txt              # raw JSON response from the LLM
 ├── inference_metrics.txt   # inference metrics
-├── Test1.OCL               # generated OCL specification
+└── Test1.OCL               # generated OCL specification
 ```
 ---
 
