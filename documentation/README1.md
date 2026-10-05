@@ -254,25 +254,6 @@ for /f "delims=" %N in ('ssh -m hmac-sha2-512 USERNAME@HPC_HOST "squeue -n \"Jup
 
 > **Recommendation:** Using the numeric SLURM job ID with `-j` is usually clearer and avoids problems caused by spaces or special characters in job names.
 
-The tunnel creates a connection similar to:
-
-```text
-Local Windows computer
-        |
-        | localhost:7860
-        |
-        v
-     SSH tunnel
-        |
-        v
-HPC compute node
-        |
-        | port 7860
-        |
-        v
-Gradio application
-```
-
 Keep this second CMD window open while using the Gradio application.
 
 **KCL example:**
@@ -314,49 +295,4 @@ Your Gradio application should open in the browser.
 
 ---
 
-### Troubleshooting
-
-#### `squeue: error: Invalid job id`
-
-If you see:
-
-```text
-squeue: error: Invalid job id: Jupyter
-```
-
-you probably used a command similar to:
-
-```bash
-squeue -j Jupyter Lab 12345678
-```
-
-This is incorrect because `-j` expects a **SLURM job ID**.
-
-Use:
-
-```bash
-squeue -j 12345678
-```
-
-if `12345678` is your job ID.
-
-If `Jupyter Lab` is the job name, use:
-
-```bash
-squeue -n "Jupyter Lab"
-```
-
-instead.
-
-#### The browser cannot connect
-
-Check that:
-
-* The SLURM job is still running.
-* `python app.py` is still running.
-* The Gradio application is using port `7860`.
-* The SSH tunnel CMD window is still open.
-* `LOCAL_PORT` and `REMOTE_PORT` match the port configured for the Gradio application.
-* You are opening `http://localhost:7860` on the **same computer where the SSH tunnel is running**.
-
-> **Provider-specific note:** HPC providers may use different authentication systems, partitions, resource-request commands, environment modules, login hosts, and networking configurations. If your provider does not use SLURM, replace the SLURM-specific commands with the equivalent commands provided by your HPC administrator.
+and networking configurations. If your provider does not use SLURM, replace the SLURM-specific commands with the equivalent commands provided by your HPC administrator.
