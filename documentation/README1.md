@@ -295,4 +295,3 @@ Your Gradio application should open in the browser.
 
 ---
 
-and networking configurations. If your provider does not use SLURM, replace the SLURM-specific commands with the equivalent commands provided by your HPC administrator.
