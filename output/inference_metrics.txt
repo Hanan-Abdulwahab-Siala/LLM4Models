@@ -1,0 +1,13 @@
+===========================================
+Inference Metrics
+===========================================
+Language:                  Java
+Task:                      OCL
+Model type:                LoRA Adapter
+Model version:             2
+Input tokens:              232
+Generated tokens:          134
+Inference time:            6.205261s
+Time per input token:      0.026747s
+Time per generated token:  0.046308s
+===========================================

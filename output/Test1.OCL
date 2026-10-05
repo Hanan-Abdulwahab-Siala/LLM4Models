@@ -1,0 +1,16 @@
+class MedicalRecord {
+   attribute recordType : String := "General Record";
+}
+ class PatientRecord extends MedicalRecord {
+   attribute patientID : int := 4;
+}
+class DoctorRecord extends PatientRecord {
+   attribute consultationFee : double;
+   operation processRecord() : void
+  pre: true
+  post: true
+  activity: (     OclFile["System.out"].println(recordType + " is being processed for patient ID " + patientID + ".") );
+}
+class TreatmentRecord extends PatientRecord {
+   attribute treatmentCode : int;
+}
