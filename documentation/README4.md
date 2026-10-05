@@ -2,9 +2,9 @@
 
 We provide an optional KCL CREATE script to run the project in an HPC/GPU environment without the Gradio interface.
 
-#### 1. Connect to the GPU Provider
+#### 1. Connect to the GPU/HPC Provider
 
-From your local computer, connect to the remote GPU/HPC server using SSH. For example:
+From your local computer, connect to the remote GPU/HPC server using SSH:
 
 ```bash
 ssh -m hmac-sha2-512 USERNAME@HPC_HOST
@@ -12,22 +12,30 @@ ssh -m hmac-sha2-512 USERNAME@HPC_HOST
 
 Replace:
 
-- USERNAME with your account username on the HPC/GPU provider.
-- HPC_HOST with the hostname of the remote HPC/GPU server.
+* `USERNAME` with your account username on the HPC/GPU provider.
+* `HPC_HOST` with the hostname of the remote HPC/GPU server.
+
+For example:
+
+```bash
+ssh -m hmac-sha2-512 username@hpc.example.org
+```
 
 After connecting successfully, you should see a shell prompt on the HPC login node, similar to:
 
 ```bash
-USERNAME@HPC_LOGIN_NODE:~$
-```
-
-For example, if your provider gives you the username `k12345` and the login hostname `hpc.example.org`:
-
-```bash
-ssh -m hmac-sha2-512 k12345@hpc.example.org
+username@hpc-login:~$
 ```
 
 > **Note:** You must have an account and SSH access to the HPC/GPU provider before running this command. The hostname, username, authentication method, and SSH options may differ between providers.
+
+**KCL example:**
+
+For users of the KCL CREATE HPC system, the connection may look like:
+
+```bash
+ssh -m hmac-sha2-512 k12345@hpc.create.kcl.ac.uk
+```
 
 ---
 
