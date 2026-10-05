@@ -1,13 +1,12 @@
 # LLM4Models
 
-An LLM4Models project for extracting UML class diagrams and OCL specifications from both Java and Python code using a fine-tuned Mistral LLM.
+An LLM4Models project that extracts UML class diagrams and OCL specifications from Java and Python code using a fine-tuned Mistral LLM.
 
 The project provides:
 
 - A command-line extractor
 - A Gradio web interface
 - LoRA adapter and full-model options
-- Automatic GPU hardware detection
 - Optional KCL CREATE HPC scripts for the project author's GPU workflow
 
 ---
