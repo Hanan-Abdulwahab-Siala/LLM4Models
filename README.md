@@ -4,8 +4,8 @@ An LLM4Models project that extracts UML class diagrams and OCL specifications fr
 
 The project provides:
 
-- A command-line extractor
 - A Gradio web interface
+- A command-line extractor
 - LoRA adapter and full-model options
 - Optional KCL CREATE HPC scripts for the project author's GPU workflow
 
