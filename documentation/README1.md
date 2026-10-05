@@ -194,10 +194,6 @@ python app.py
 
 The application should start using the port configured in `app.py`.
 
-For example, if the application is configured to use port `7860`, the application will be available on port `7860` on the HPC compute node.
-
-Keep this terminal open while using the Gradio interface.
-
 ---
 
 #### 7. Create an SSH Tunnel
