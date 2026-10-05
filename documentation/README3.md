@@ -149,34 +149,62 @@ JOBID       PARTITION   NAME         USER    ST   NODELIST
 ```
 
 ---
+#### 6. Open the SSH Tunnel
 
-#### 6. Open the Tunnel
+Now go to your Windows PC and open a **second CMD window**.
 
-Now go to your Windows PC and open a second CMD window, and enter:
+Use the **JOBID obtained in Step 5** to find the compute node running your SLURM job and create an SSH tunnel to the Gradio application.
 
-```bash
-for /f "delims=" %N in ('ssh -m hmac-sha2-512 USER@HPC_HOST "squeue -n JOB_NAME -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USER@HPC_HOST
+The general command is:
 
-or
-
-for /f "delims=" %N in ('ssh -m hmac-sha2-512 USER@HPC_HOST "squeue -j JOB_ID -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USER@HPC_HOST
+```cmd
+for /f "delims=" %N in ('ssh -m hmac-sha2-512 USERNAME@HPC_HOST "squeue -j JOB_ID -h -o %%N"') do ssh -m hmac-sha2-512 -N -L LOCAL_PORT:%N:REMOTE_PORT USERNAME@HPC_HOST
 ```
-Where:
- - USER → your HPC username
- - HPC_HOST → your HPC login host
- - JOB_NAME → your Slurm job name
- - LOCAL_PORT → local port, e.g. 7860
- - REMOTE_PORT → application port, e.g. 7860
- - JOB_ID → the Slurm job ID, e.g. 12345678
 
-For example:
-```bash
-for /f "delims=" %N in ('ssh -m hmac-sha2-512 k12345@hpc.create.kcl.ac.uk "squeue -j Jupyter Lab 12345678 -h -o %%N"') do ssh -m hmac-sha2-512 -N -L 7860:%N:7860 k12345@hpc.create.kcl.ac.uk
+Replace:
 
-or
+* `USERNAME` → your HPC username
+* `HPC_HOST` → your HPC login hostname
+* `JOB_ID` → the SLURM job ID obtained in Step 5
+* `LOCAL_PORT` → the port on your local computer, e.g. `7860`
+* `REMOTE_PORT` → the port used by the Gradio application, e.g. `7860`
 
+For example, if your JOBID is:
+
+```text
+12345678
+```
+
+and the Gradio application uses port `7860`, use:
+
+```cmd
+for /f "delims=" %N in ('ssh -m hmac-sha2-512 USERNAME@HPC_HOST "squeue -j 12345678 -h -o %%N"') do ssh -m hmac-sha2-512 -N -L 7860:%N:7860 USERNAME@HPC_HOST
+```
+
+**KCL example:**
+
+If your KCL username is `k12345`, your KCL HPC hostname is `hpc.create.kcl.ac.uk`, and your JOBID is `12345678`:
+
+```cmd
 for /f "delims=" %N in ('ssh -m hmac-sha2-512 k12345@hpc.create.kcl.ac.uk "squeue -j 12345678 -h -o %%N"') do ssh -m hmac-sha2-512 -N -L 7860:%N:7860 k12345@hpc.create.kcl.ac.uk
 ```
+
+> **Important:** When using `squeue -j`, provide **only the numeric JOBID**. Do not include the job name.
+
+For example, this is **incorrect**:
+
+```bash
+squeue -j Jupyter Lab 12345678
+```
+
+The correct command is:
+
+```bash
+squeue -j 12345678
+```
+
+Keep this CMD window open while using the Gradio interface.
+
 ---
 
 #### 7. Open Gradio in Your Browser
