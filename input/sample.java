@@ -1,16 +1,15 @@
-import java.util.*;
-abstract class AbstractContract {
-   public boolean validateTransaction(int senderID, int receiverID) {
-      return senderID != receiverID;
-   }
+class MedicalRecord {
+    String recordType = "General Record";
 }
-class Payment extends AbstractContract {
-   private int senderID;
-   private int receiverID;
-   public int getSenderID() {
-      return senderID;
-   }
-   public int getReceiverID() {
-      return receiverID;
-   }
+class PatientRecord extends MedicalRecord {
+    int patientID = 4;
+}
+class DoctorRecord extends PatientRecord {
+    float consultationFee;
+    void processRecord() {
+        System.out.println(recordType + " is being processed for patient ID " + patientID + ".");
+    }
+}
+class TreatmentRecord extends PatientRecord {
+    int treatmentCode;
 }
