@@ -68,7 +68,7 @@ Recommended:
 Clone the repository:
 
 ```bash
-git clone https://github.com/HA-Siala/LLM4Models.git
+git clone https://github.com/Hanan-Abdulwahab-Siala/LLM4Models.git
 cd LLM4Models
 ```
 
