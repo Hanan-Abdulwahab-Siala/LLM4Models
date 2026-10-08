@@ -631,7 +631,7 @@ with gr.Blocks(title="LLM4Models UML/OCL Extractor") as app:
 
 • UML Class Diagram extraction is intended primarily for object-oriented programs containing classes, interfaces, attributes, methods, constructors, and relationships.
 
-• Purely procedural programs or scripts without meaningful class/object-oriented structure are not appropriate for UML Class Diagram extraction.
+• Purely procedural programs or scripts without meaningful class/object-oriented structure are not appropriate for UML class diagram extraction.
 
 • Programs consisting mainly of standalone functions, data-processing pipelines, configuration files, or other non-object-oriented structures may not produce meaningful UML class diagrams.
 
@@ -639,7 +639,7 @@ with gr.Blocks(title="LLM4Models UML/OCL Extractor") as app:
 
 • Incomplete, syntactically invalid, truncated, or partially generated source code may produce incomplete results.
 
-• External-library behavior that is not visible in the supplied source code may not be represented completely.
+• External-library behaviour that is not visible in the supplied source code may not be represented completely.
 
 • The generated UML represents structure inferred from the supplied source code and does not guarantee the complete runtime architecture.
 
