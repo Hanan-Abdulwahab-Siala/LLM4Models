@@ -300,7 +300,7 @@ output/
 ├── inference_metrics.txt   # inference metrics
 └── Test1.OCL               # generated OCL specification
 ```
-To view the output, for example, output.txt, you can use the following command:
+To view the output, for example, `output.txt`, you can use the following command:
 
 ```bash
 cat output/output.txt
